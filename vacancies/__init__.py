@@ -1,1 +1,1 @@
-from vacancies.form import Form
+from vacancies.menu import Menu

@@ -1,8 +1,8 @@
 import json
 import os
 import shutil
-from notify import notification
-from PIL import Image, ImageTk
+#from notify import notification
+#from PIL import Image, ImageTk
 from tkfontawesome import icon_to_image
 
 items = {}
