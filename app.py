@@ -1,4 +1,4 @@
 import vacancies
 
-app = vacancies.Menu(__file__)
+app = vacancies.Form(__file__)
 app.mainloop()

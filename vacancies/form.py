@@ -2,7 +2,7 @@ import tkinter as tk
 from tkinter import ttk
 from utils import appName
 
-class Menu(tk.Tk):
+class Form(tk.Tk):
     def __init__(self, sourceFile):
         super().__init__()
         #loadStructures(sourceFile)
