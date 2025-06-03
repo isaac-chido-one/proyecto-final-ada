@@ -1,1 +1,1 @@
-from vacancies.menu import Menu
+from vacancies.views.menu import Menu
