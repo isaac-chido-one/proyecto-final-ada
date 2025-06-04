@@ -1,17 +1,16 @@
 import re
 import tkinter as tk
-#from fruit_store.fruits import *
 from tkfontawesome import icon_to_image
 from tkinter import filedialog
 from tkinter import ttk
-from vacancies.utils import appName
+from vacancies.utils import appName, notifyAlert
 
 class FormVacancy(tk.Toplevel):
 
     def __init__(self, parentModal):
         super().__init__(parentModal)
 
-        self.title(appName() + ' - Vacante')
+        self.title(appName() + ' - Vacantes')
         self.geometry("800x400")
         self.state('withdrawn')
         self.protocol('WM_DELETE_WINDOW', self.onClose)
@@ -19,18 +18,17 @@ class FormVacancy(tk.Toplevel):
         # configure the grid
         self.columnconfigure(0, weight=1)
         self.columnconfigure(1, weight=3)
-        self.columnconfigure(2, weight=1)
 
         # title
         self.iconTitle = icon_to_image('sitemap', fill="#4267B2", scale_to_width=16)
-        self.labelTitle = ttk.Label(self, text="Puesto:", image=self.iconTitle, compound=tk.LEFT)
+        self.labelTitle = ttk.Label(self, text="Puesto: *", image=self.iconTitle, compound=tk.LEFT)
         self.labelTitle.grid(column=0, row=0, sticky=tk.W, padx=5, pady=5)
         self.entryTitle = ttk.Entry(self)
         self.entryTitle.grid(column=1, row=0, sticky=tk.EW, padx=5, pady=5)
 
         # company
         self.iconCompany = icon_to_image('industry', fill="#4267B2", scale_to_width=16)
-        self.labelCompany = ttk.Label(self, text="Empresa:", image=self.iconCompany, compound=tk.LEFT)
+        self.labelCompany = ttk.Label(self, text="Empresa: *", image=self.iconCompany, compound=tk.LEFT)
         self.labelCompany.grid(column=0, row=1, sticky=tk.W, padx=5, pady=5)
         self.entryCompany = ttk.Entry(self)
         self.entryCompany.grid(column=1, row=1, sticky=tk.EW, padx=5, pady=5)
@@ -72,7 +70,7 @@ class FormVacancy(tk.Toplevel):
 
         # buttons frame
         self.frameButtons = tk.Frame(self)
-        self.frameButtons.grid(row=7, column=1, columnspan=2, sticky=tk.E, pady=10)
+        self.frameButtons.grid(row=7, column=0, columnspan=2, sticky=tk.E, pady=10)
         self.frameButtons.rowconfigure(0, weight=1)
         self.frameButtons.rowconfigure(1, weight=1)
         self.frameButtons.columnconfigure(0, weight=1)
@@ -96,51 +94,59 @@ class FormVacancy(tk.Toplevel):
         self.entryTitle.delete(0, tk.END)
         self.entryCompany.delete(0, tk.END)
         self.entryLocation.delete(0, tk.END)
+        self.entryMinSalary.delete(0, tk.END)
         self.entryMaxSalary.delete(0, tk.END)
+        self.textDescription.delete(0, tk.END)
+        self.textRequirements.delete(0, tk.END)
         self.iconify()
 
-        self.code = code
         self.callbackOnStore = callbackOnStore
 
     # Cerrar la ventana
     def close(self):
         self.withdraw()
 
-    # Guadar la información de una fruta
+    # Guadar la información de una vacante
     def save(self):
-        code = self.entryTitle.get()
-        code = code.strip()
-        item = self.entryCompany.get()
-        item = item.strip()
-        cost = self.entryLocation.get()
-        cost = cost.strip()
-        image = self.entryMaxSalary.get()
+        title = self.entryTitle.get()
+        title = title.strip()
+        company = self.entryCompany.get()
+        company = company.strip()
+        location = self.entryLocation.get()
+        location = location.strip()
+        min_salary = self.entryMinSalary.get()
+        min_salary = min_salary.strip()
+        max_salary = self.entryMaxSalary.get()
+        max_salary = max_salary.strip()
+        description = self.textDescription.get('1.0', tk.END)
+        description = description.strip()
+        requirements = self.textRequirements.get('1.0', tk.END)
+        requirements = requirements.strip()
 
-        # validar código
-        if code == '':
-            notifyAlert('El código es requerido', self.entryTitle)
-            return
-        if (code is None or code != self.code) and existsFruit(code):
-            notifyAlert('El código ya está asignado a otro artículo', self.entryTitle)
-            return
-
-        # validar fruta
-        if item == '':
-            notifyAlert('El artículo es requerido', self.entryCompany)
-            return
-
-        # validar costo
-        if cost == '':
-            notifyAlert('El costo es requerido', self.entryLocation)
-            return
-        if re.match(r'^[\-\+]?\d+(\.\d*)?$', cost) is None:
-            notifyAlert('El costo debe ser un valor numérico', self.entryLocation)
+        # validar puesto
+        if title == '':
+            notifyAlert('El puesto es requerido', self.entryTitle)
             return
 
-        cost = float(cost)
+        # validar empresa
+        if company == '':
+            notifyAlert('La empresa es requerida', self.entryCompany)
+            return
 
-        if image == '':
-            image = None
+        # validar salario mínimo
+        if min_salary != '' and re.match(r'^[\-\+]?\d+(\.\d*)?$', min_salary) is None:
+            notifyAlert('El salario mínimo debe ser un valor numérico', self.entryMinSalary)
+            return
+
+        # validar salario máximo
+        if max_salary != '' and re.match(r'^[\-\+]?\d+(\.\d*)?$', max_salary) is None:
+            notifyAlert('El salario máximo debe ser un valor numérico', self.entryMaxSalary)
+            return
+
+        print('ok')
+        # if checkIfExists:
+        #     notifyAlert('exists')
+        #     return
+        #self.callbackOnStore()
 
         self.close()
-        self.callbackOnStore(code, item, cost, image)

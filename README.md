@@ -9,5 +9,6 @@ Proyecto Final Análisis y Diseño de  Algoritmos
 5. En linux entrar al ambiente python: `source venv/bin/activate`
 6. En windows entrar al ambiente python: `venv\Scripts\activate`
 7. Instalar dependencias: `pip install -r requirements.txt`
+8. Ejecutar la aplicación: `python app.py`
 
 Listar dependencias: `pip freeze > requirements.txt`
