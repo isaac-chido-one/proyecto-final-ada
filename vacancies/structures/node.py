@@ -64,3 +64,10 @@ class Node():
 		Node
 		'''
 		return None if node is None else (node if node._link is None else Node.first(node._link))
+
+	@staticmethod
+	def each(node, callback, args):
+		''' Ejecuta una funcion en cada nodo. '''
+		if node is not None:
+			callback(node._data, args)
+			Node.each(node._link, callback, args)

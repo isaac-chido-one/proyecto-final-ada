@@ -1,7 +1,8 @@
+from slugify import slugify
 
 class Vacancy:
 
-	def __init__(self, company = '', description = '', location = '', max_salary = 0, min_salary = 0, requirements = '', title = ''):
+	def __init__(self, company = '', description = '', location = '', max_salary = None, min_salary = None, requirements = '', title = ''):
 		self.__company = company
 		self.__description = description
 		self.__location = location
@@ -66,5 +67,34 @@ class Vacancy:
 	def title(self, title):
 		self.__title = title
 
+	def __eq__(self, other):
+		return isinstance(other, Vacancy) and self.__company == other.__company and self.__title == other.__title and self.__location == other.__location
+
 	def __repr__(self):
-		return 'Puesto: {0} Empresa: {1}'.format(self.__title, self.__company)
+		return '{0};{1};{2}'.format(
+			slugify(self.__company),
+			slugify(self.__title),
+			slugify(self.__location)
+		)
+
+	def to_dictionary(self):
+		return {
+			'company': self.__company,
+			'description': self.__description,
+			'location': self.__location,
+			'max_salary': self.__max_salary,
+			'min_salary': self.__min_salary,
+			'requirements': self.__requirements,
+			'title': self.__title
+		}
+
+	@staticmethod
+	def from_dictionary(dictionary):
+		company = dictionary['company']
+		description = dictionary['description']
+		location = dictionary['location']
+		max_salary = dictionary['max_salary']
+		min_salary = dictionary['min_salary']
+		requirements = dictionary['requirements']
+		title = dictionary['title']
+		return Vacancy(company, description, location, max_salary, min_salary, requirements, title)

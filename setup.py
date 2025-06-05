@@ -14,7 +14,9 @@ setup(
         'lxml>5.4.0',
         'notify_py>0.3.43',
         'packaging>25.0',
+        'python-slugify>8.0.4',
         'scikit-build>0.18.1',
+        'text-unidecode>1.3'
         'tkfontawesome>0.3.2',
         'tksvg>0.7.4',
         'tomli>2.2.1',

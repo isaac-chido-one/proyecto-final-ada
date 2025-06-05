@@ -1,4 +1,4 @@
-from node import Node
+from vacancies.structures.node import Node
 
 class Stack():
 	''' Clase pila '''
@@ -64,3 +64,6 @@ class Stack():
 		bool
 		'''
 		return self.node is None
+
+	def each(self, callback, args):
+		Node.each(self.node, callback, args)

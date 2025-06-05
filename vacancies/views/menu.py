@@ -7,9 +7,8 @@ from vacancies.views.form_experience import FormExperience
 from vacancies.views.form_vacancy import FormVacancy
 
 class Menu(tk.Tk):
-    def __init__(self, sourceFile):
+    def __init__(self):
         super().__init__()
-        #loadStructures(sourceFile)
         self.modalVacancies = None
         self.modalApplicants = None
         self.modalExperience = None

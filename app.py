@@ -1,4 +1,7 @@
 import vacancies
+from vacancies.structures.app import loadStructures, storeStructures
 
-app = vacancies.Menu(__file__)
+loadStructures(__file__)
+app = vacancies.Menu()
 app.mainloop()
+storeStructures()

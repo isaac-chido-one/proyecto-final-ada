@@ -3,7 +3,9 @@ import tkinter as tk
 from tkfontawesome import icon_to_image
 from tkinter import filedialog
 from tkinter import ttk
-from vacancies.utils import appName, notifyAlert
+from vacancies.entities.vacancy import Vacancy
+from vacancies.structures.app import insertVacancy
+from vacancies.utils import appName, notifyAlert, notifySuccess
 
 class FormVacancy(tk.Toplevel):
 
@@ -35,7 +37,7 @@ class FormVacancy(tk.Toplevel):
 
         # location
         self.iconLocation = icon_to_image('location-dot', fill="#4267B2", scale_to_width=16)
-        self.labelLocation = ttk.Label(self, text="Locación:", image=self.iconLocation, compound=tk.LEFT)
+        self.labelLocation = ttk.Label(self, text="Locación: *", image=self.iconLocation, compound=tk.LEFT)
         self.labelLocation.grid(column=0, row=2, sticky=tk.W, padx=5, pady=5)
         self.entryLocation = ttk.Entry(self)
         self.entryLocation.grid(column=1, row=2, sticky=tk.EW, padx=5, pady=5)
@@ -90,7 +92,7 @@ class FormVacancy(tk.Toplevel):
         self.close()
 
     # Abrir la ventana
-    def open(self, callbackOnStore = None):
+    def open(self):
         self.entryTitle.delete(0, tk.END)
         self.entryCompany.delete(0, tk.END)
         self.entryLocation.delete(0, tk.END)
@@ -99,8 +101,6 @@ class FormVacancy(tk.Toplevel):
         self.textDescription.delete(0, tk.END)
         self.textRequirements.delete(0, tk.END)
         self.iconify()
-
-        self.callbackOnStore = callbackOnStore
 
     # Cerrar la ventana
     def close(self):
@@ -133,6 +133,11 @@ class FormVacancy(tk.Toplevel):
             notifyAlert('La empresa es requerida', self.entryCompany)
             return
 
+        # validar locacion
+        if location == '':
+            notifyAlert('La locación es requerida', self.entryLocation)
+            return
+
         # validar salario mínimo
         if min_salary != '' and re.match(r'^[\-\+]?\d+(\.\d*)?$', min_salary) is None:
             notifyAlert('El salario mínimo debe ser un valor numérico', self.entryMinSalary)
@@ -143,10 +148,14 @@ class FormVacancy(tk.Toplevel):
             notifyAlert('El salario máximo debe ser un valor numérico', self.entryMaxSalary)
             return
 
-        print('ok')
+        max_salary = None if max_salary == '' else float(max_salary)
+        min_salary = None if min_salary == '' else float(min_salary)
+
         # if checkIfExists:
         #     notifyAlert('exists')
         #     return
-        #self.callbackOnStore()
 
+        vacancy = Vacancy(company, description, location, max_salary, min_salary, requirements, title)
+        insertVacancy(vacancy)
+        notifySuccess('La vacante se ha agregado correctamente.')
         self.close()

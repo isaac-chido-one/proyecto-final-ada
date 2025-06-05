@@ -1,7 +1,9 @@
 import tkinter as tk
 from tkinter import ttk
 from tkfontawesome import icon_to_image
-from vacancies.utils import appName, notifyAlert
+from vacancies.entities.applicant import Applicant
+from vacancies.structures.app import insertApplicant
+from vacancies.utils import appName, notifyAlert, notifySuccess
 
 class FormApplicant(tk.Toplevel):
 
@@ -9,7 +11,7 @@ class FormApplicant(tk.Toplevel):
         super().__init__(parentModal)
 
         self.title(appName() + ' - Candidatos')
-        self.geometry("800x300")
+        self.geometry("780x270")
         self.state('withdrawn')
         self.protocol('WM_DELETE_WINDOW', self.onClose)
 
@@ -52,19 +54,9 @@ class FormApplicant(tk.Toplevel):
         self.textResume = tk.Text(self, height=4, width=80)
         self.textResume.grid(column=1, row=4, sticky=tk.EW, padx=5, pady=5)
 
-        # vacancy
-        self.iconVacancy = icon_to_image('suitcase', fill="#4267B2", scale_to_width=16)
-        self.labelVacancy = ttk.Label(self, text="Vacante: *", image=self.iconVacancy, compound=tk.LEFT)
-        self.labelVacancy.grid(column=0, row=5, sticky=tk.W, padx=5, pady=5)
-        options = [
-            "Selecciona una opción..."
-        ]
-        self.comboVacancy = ttk.Combobox(self, values=options, state='readonly')
-        self.comboVacancy.grid(column=1, row=5, sticky=tk.EW, padx=5, pady=5)
-
         # buttons frame
         self.frameButtons = tk.Frame(self)
-        self.frameButtons.grid(row=6, column=0, columnspan=2, sticky=tk.E, pady=10)
+        self.frameButtons.grid(row=5, column=0, columnspan=2, sticky=tk.E, pady=10)
         self.frameButtons.rowconfigure(0, weight=1)
         self.frameButtons.rowconfigure(1, weight=1)
         self.frameButtons.columnconfigure(0, weight=1)
@@ -90,7 +82,6 @@ class FormApplicant(tk.Toplevel):
         self.entryEmail.delete(0, tk.END)
         self.entryPhone.delete(0, tk.END)
         self.textResume.delete('1.0', tk.END)
-        self.comboVacancy.current(0)
         self.iconify()
 
         self.callbackOnStore = callbackOnStore
@@ -107,7 +98,6 @@ class FormApplicant(tk.Toplevel):
         phone = phone.strip()
         resume = self.textResume.get('1.0', tk.END)
         resume = resume.strip()
-        vacancy = self.comboVacancy.current()
 
         # validar nombres
         if first_name == '':
@@ -119,16 +109,15 @@ class FormApplicant(tk.Toplevel):
             notifyAlert('Los apellidos son requeridos', self.entryLastName)
             return
 
-        # validar vacante
-        if vacancy == 0:
-            notifyAlert('La vacante es requerida', self.comboVacancy)
-            return
-
         print('ok')
         # if checkIfExists:
         #     notifyAlert('exists')
         #     return
-        #self.callbackOnStore()
+
+        applicant = Applicant(email, first_name, last_name, phone, resume)
+        insertApplicant(applicant)
+        notifySuccess('El candidato se ha agregado correctamente.')
+        self.close()
 
     # Cerrar la ventana
     def close(self):
