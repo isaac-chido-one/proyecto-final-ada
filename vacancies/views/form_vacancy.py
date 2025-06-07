@@ -1,7 +1,6 @@
 import re
 import tkinter as tk
 from tkfontawesome import icon_to_image
-from tkinter import filedialog
 from tkinter import ttk
 from vacancies.entities.vacancy import Vacancy
 from vacancies.structures.app import insertVacancy
@@ -9,8 +8,10 @@ from vacancies.utils import appName, notifyAlert, notifySuccess
 
 class FormVacancy(tk.Toplevel):
 
-    def __init__(self, parentModal):
+    def __init__(self, parentModal, callback):
         super().__init__(parentModal)
+        self.callback = callback
+        self.vacancy = None
 
         self.title(appName() + ' - Vacantes')
         self.geometry("800x400")
@@ -84,7 +85,7 @@ class FormVacancy(tk.Toplevel):
 
         # accept button
         self.iconStore = icon_to_image('check', fill="#4267B2", scale_to_width=16)
-        self.buttonStore = ttk.Button(self.frameButtons, text='Guardar', image=self.iconStore, compound=tk.LEFT, command=lambda: self.save())
+        self.buttonStore = ttk.Button(self.frameButtons, text='Guardar', image=self.iconStore, compound=tk.LEFT, command=lambda: self.store())
         self.buttonStore.grid(column=1, row=0, padx=5)
 
     # Evento al cerrar la ventana
@@ -92,14 +93,25 @@ class FormVacancy(tk.Toplevel):
         self.close()
 
     # Abrir la ventana
-    def open(self):
+    def open(self, vacancy = None):
+        self.vacancy = vacancy
         self.entryTitle.delete(0, tk.END)
         self.entryCompany.delete(0, tk.END)
         self.entryLocation.delete(0, tk.END)
         self.entryMinSalary.delete(0, tk.END)
         self.entryMaxSalary.delete(0, tk.END)
-        self.textDescription.delete(0, tk.END)
-        self.textRequirements.delete(0, tk.END)
+        self.textDescription.delete('1.0', tk.END)
+        self.textRequirements.delete('1.0', tk.END)
+
+        if not vacancy is None:
+            self.entryTitle.insert(0, vacancy.title)
+            self.entryCompany.insert(0, vacancy.company)
+            self.entryLocation.insert(0, vacancy.location)
+            self.entryMinSalary.insert(0, '' if vacancy.min_salary is None else '{0:,.2f}'.format(vacancy.min_salary))
+            self.entryMaxSalary.insert(0, '' if vacancy.max_salary is None else '{0:,.2f}'.format(vacancy.max_salary))
+            self.textDescription.insert('1.0', vacancy.description)
+            self.textRequirements.insert('1.0', vacancy.requirements)
+
         self.iconify()
 
     # Cerrar la ventana
@@ -107,7 +119,7 @@ class FormVacancy(tk.Toplevel):
         self.withdraw()
 
     # Guadar la información de una vacante
-    def save(self):
+    def store(self):
         title = self.entryTitle.get()
         title = title.strip()
         company = self.entryCompany.get()
@@ -155,7 +167,19 @@ class FormVacancy(tk.Toplevel):
         #     notifyAlert('exists')
         #     return
 
-        vacancy = Vacancy(company, description, location, max_salary, min_salary, requirements, title)
-        insertVacancy(vacancy)
-        notifySuccess('La vacante se ha agregado correctamente.')
+        if self.vacancy is None:
+            vacancy = Vacancy(company, description, location, max_salary, min_salary, requirements, title)
+            insertVacancy(vacancy)
+        else:
+            self.vacancy.company = company
+            self.vacancy.description = description
+            self.vacancy.location = location
+            self.vacancy.max_salary = max_salary
+            self.vacancy.min_salary = min_salary
+            self.vacancy.requirements = requirements
+            self.vacancy.title = title
+            self.vacancy = None
+
         self.close()
+        notifySuccess('La vacante "' + title + '" se ha guardado correctamente.')
+        self.callback()

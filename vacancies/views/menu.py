@@ -2,9 +2,9 @@ import tkinter as tk
 from tkfontawesome import icon_to_image
 from tkinter import ttk
 from vacancies.utils import appName
-from vacancies.views.form_applicant import FormApplicant
+from vacancies.views.table_applicants import TableApplicants
 from vacancies.views.form_experience import FormExperience
-from vacancies.views.form_vacancy import FormVacancy
+from vacancies.views.table_vacancies import TableVacancies
 
 class Menu(tk.Tk):
     def __init__(self):
@@ -58,13 +58,13 @@ class Menu(tk.Tk):
     # Abre la ventana de vacantes
     def openModalVacancies(self):
         if self.modalVacancies is None:
-            self.modalVacancies = FormVacancy(self)
-        self.modalVacancies.iconify()
+            self.modalVacancies = TableVacancies(self)
+        self.modalVacancies.open()
 
     # Abre la ventana de candidatos
     def openModalApplicants(self):
         if self.modalApplicants is None:
-            self.modalApplicants = FormApplicant(self)
+            self.modalApplicants = TableApplicants(self)
         self.modalApplicants.open()
 
     # Abre la ventana de experiencia

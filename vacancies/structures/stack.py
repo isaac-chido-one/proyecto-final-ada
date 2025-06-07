@@ -66,4 +66,12 @@ class Stack():
 		return self.node is None
 
 	def each(self, callback, args):
+		''' Ejecuta una funcion en cada elemento de cada nodo. '''
 		Node.each(self.node, callback, args)
+
+	def find(self, element):
+		''' Busca un elemento por comparación y regresa el elemento encontrado '''
+		return Node.find(self.node, element)
+
+	def remove(self, element):
+		self.node = Node.remove(self.node, element)

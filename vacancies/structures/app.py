@@ -9,6 +9,22 @@ hashmapExperience = None
 listVacancies = None
 stackApplicants = Stack()
 
+def findApplicant(applicant):
+	global stackApplicants
+	return stackApplicants.find(applicant)
+
+def findVacancy(vacancy):
+	global listVacancies
+	return Node.find(listVacancies, vacancy)
+
+def forEachApplicant(callback, args):
+	global stackApplicants
+	stackApplicants.each(callback, args)
+
+def forEachVacancy(callback, args):
+	global listVacancies
+	Node.each(listVacancies, callback, args)
+
 def insertApplicant(applicant):
 	global stackApplicants
 	stackApplicants.Apilar(applicant)
@@ -16,6 +32,14 @@ def insertApplicant(applicant):
 def insertVacancy(vacancy):
 	global listVacancies
 	listVacancies = Node(vacancy, listVacancies)
+
+def removeApplicant(applicant):
+	global stackApplicants
+	stackApplicants.remove(applicant)
+
+def removeVacancy(vacancy):
+	global listVacancies
+	listVacancies = Node.remove(listVacancies, vacancy)
 
 def loadStructures(source_file):
 	global filename

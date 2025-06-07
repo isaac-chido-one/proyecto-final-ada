@@ -65,9 +65,28 @@ class Node():
 		'''
 		return None if node is None else (node if node._link is None else Node.first(node._link))
 
+
 	@staticmethod
 	def each(node, callback, args):
-		''' Ejecuta una funcion en cada nodo. '''
+		''' Ejecuta una funcion en cada elemento de cada nodo. '''
 		if node is not None:
 			callback(node._data, args)
 			Node.each(node._link, callback, args)
+
+	@staticmethod
+	def find(node, element):
+		''' Busca un elemento por comparación y regresa el elemento encontrado '''
+		return None if node is None else (node._data if element == node._data else Node.find(node._link, element))
+
+	@staticmethod
+	def remove(node, element):
+		''' Busca un elemento por comparación y lo quita de la lista '''
+		if node is None:
+			return None
+
+		if element == node._data:
+			return node._link
+
+		node._link = Node.remove(node._link, element)
+
+		return node

@@ -49,7 +49,7 @@ class Applicant:
 		self.__resume = resume
 
 	def __eq__(self, other):
-		return isinstance(other, Applicant) and self.__first_name == other.__first_name and self.__last_name == other.__title and self.__location == other.__last_name
+		return isinstance(other, Applicant) and self.__first_name == other.__first_name and self.__last_name == other.__last_name
 
 	def __repr__(self):
 		return '{0};{1}'.format(self.__first_name, self.__last_name)

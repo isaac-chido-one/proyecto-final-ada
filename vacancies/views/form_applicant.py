@@ -7,8 +7,10 @@ from vacancies.utils import appName, notifyAlert, notifySuccess
 
 class FormApplicant(tk.Toplevel):
 
-    def __init__(self, parentModal):
+    def __init__(self, parentModal, callback):
         super().__init__(parentModal)
+        self.applicant = None
+        self.callback = callback
 
         self.title(appName() + ' - Candidatos')
         self.geometry("780x270")
@@ -68,7 +70,7 @@ class FormApplicant(tk.Toplevel):
 
         # accept button
         self.iconStore = icon_to_image('check', fill="#4267B2", scale_to_width=16)
-        self.buttonStore = ttk.Button(self.frameButtons, text='Guardar', image=self.iconStore, compound=tk.LEFT, command=lambda: self.save())
+        self.buttonStore = ttk.Button(self.frameButtons, text='Guardar', image=self.iconStore, compound=tk.LEFT, command=lambda: self.store())
         self.buttonStore.grid(column=1, row=0, padx=5)
 
     # Evento al cerrar la ventana
@@ -76,18 +78,29 @@ class FormApplicant(tk.Toplevel):
         self.close()
 
     # Abrir la ventana
-    def open(self, callbackOnStore = None):
+    def open(self, applicant = None):
+        self.applicant = applicant
         self.entryFirstName.delete(0, tk.END)
         self.entryLastName.delete(0, tk.END)
         self.entryEmail.delete(0, tk.END)
         self.entryPhone.delete(0, tk.END)
         self.textResume.delete('1.0', tk.END)
+
+        if not applicant is None:
+            self.entryFirstName.insert(0, applicant.first_name)
+            self.entryLastName.insert(0, applicant.last_name)
+            self.entryEmail.insert(0, applicant.email)
+            self.entryPhone.insert(0, applicant.phone)
+            self.textResume.insert('1.0', applicant.resume)
+
         self.iconify()
 
-        self.callbackOnStore = callbackOnStore
+    # Cerrar la ventana
+    def close(self):
+        self.withdraw()
 
-    # Guadar la información de una vacante
-    def save(self):
+    # Guadar la información de una candidato
+    def store(self):
         first_name = self.entryFirstName.get()
         first_name = first_name.strip()
         last_name = self.entryLastName.get()
@@ -109,16 +122,21 @@ class FormApplicant(tk.Toplevel):
             notifyAlert('Los apellidos son requeridos', self.entryLastName)
             return
 
-        print('ok')
         # if checkIfExists:
         #     notifyAlert('exists')
         #     return
 
-        applicant = Applicant(email, first_name, last_name, phone, resume)
-        insertApplicant(applicant)
-        notifySuccess('El candidato se ha agregado correctamente.')
-        self.close()
+        if self.applicant is None:
+            applicant = Applicant(email, first_name, last_name, phone, resume)
+            insertApplicant(applicant)
+        else:
+            self.applicant.email = email
+            self.applicant.first_name = first_name
+            self.applicant.last_name = last_name
+            self.applicant.phone = phone
+            self.applicant.resume = resume
+            self.applicant = None
 
-    # Cerrar la ventana
-    def close(self):
-        self.withdraw()
+        self.close()
+        notifySuccess('El candidato "' + first_name + ' ' + last_name + '" se ha guardado correctamente.')
+        self.callback()
