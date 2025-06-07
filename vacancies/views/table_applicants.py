@@ -1,20 +1,20 @@
 import tkinter as tk
-from tkfontawesome import icon_to_image
 from tkinter import messagebox
 from tkinter import ttk
+from typing import Any, Optional
 from vacancies.entities.applicant import Applicant
 from vacancies.structures.app import findApplicant, forEachApplicant, removeApplicant
-from vacancies.utils import appName, notifySuccess
+from vacancies.utils import appName, createIcon, notifySuccess
 from vacancies.views.form_applicant import FormApplicant
 
 class TableApplicants(tk.Toplevel):
 
-    def __init__(self, parentModal):
+    def __init__(self, parentModal: tk.Tk):
         super().__init__(parentModal)
         self.modal = FormApplicant(parentModal, self.onStore)
 
-        self.title(appName() + ' - Candidatos')
-        self.geometry("700x500")
+        self.title(appName('Candidatos'))
+        self.geometry('700x500')
         self.state('withdrawn')
         self.protocol('WM_DELETE_WINDOW', self.onClose)
         self.resizable(True, True)
@@ -34,23 +34,23 @@ class TableApplicants(tk.Toplevel):
         self.frameButtons.columnconfigure(0, weight=1)
 
         # button delete
-        self.iconDestroy = icon_to_image('trash', fill="#4267B2", scale_to_width=16)
-        self.buttonDestroy = ttk.Button(self.frameButtons, text='Eliminar', image=self.iconDestroy, compound=tk.LEFT, command=lambda: self.destroyVacancy())
+        self.iconDestroy = createIcon('trash')
+        self.buttonDestroy = ttk.Button(self.frameButtons, text='Eliminar', image=self.iconDestroy, compound=tk.LEFT, command=lambda: self.destroyApplicant())
         self.buttonDestroy.grid(column=0, row=0, padx=5)
 
         # button applicants
-        self.iconApplicants = icon_to_image('user-tie', fill="#4267B2", scale_to_width=16)
+        self.iconApplicants = createIcon('user-tie')
         self.buttonExperience = ttk.Button(self.frameButtons, text='Experiencia', image=self.iconApplicants, compound=tk.LEFT, command=lambda: self.showExperience())
         self.buttonExperience.grid(column=1, row=0, padx=5)
 
         # button edit
-        self.iconUpdate = icon_to_image('pen', fill="#4267B2", scale_to_width=16)
-        self.buttonUpdate = ttk.Button(self.frameButtons, text='Editar', image=self.iconUpdate, compound=tk.LEFT, command=lambda: self.updateVacancy())
+        self.iconUpdate = createIcon('pen')
+        self.buttonUpdate = ttk.Button(self.frameButtons, text='Editar', image=self.iconUpdate, compound=tk.LEFT, command=lambda: self.updateApplicant())
         self.buttonUpdate.grid(column=2, row=0, padx=5)
 
         # button new
-        self.iconCreate = icon_to_image('square-plus', fill="#4267B2", scale_to_width=16)
-        self.buttonCreate = ttk.Button(self.frameButtons, text='Nuevo', image=self.iconCreate, compound=tk.LEFT, command=lambda: self.createVacancy())
+        self.iconCreate = createIcon('square-plus')
+        self.buttonCreate = ttk.Button(self.frameButtons, text='Nuevo', image=self.iconCreate, compound=tk.LEFT, command=lambda: self.createApplicant())
         self.buttonCreate.grid(column=3, row=0, padx=5)
 
         # Create a Treeview widget
@@ -86,7 +86,7 @@ class TableApplicants(tk.Toplevel):
         self.close()
 
     # Agregar un candidato a la tabla
-    def insertApplicant(self, applicant, args):
+    def insertApplicant(self, applicant: Applicant, args: Any):
         i = args['i']
         values = [applicant.first_name, applicant.last_name, applicant.email, applicant.phone]
         tag = 'evenrow' if i % 2 == 0 else 'oddrow'
@@ -131,7 +131,7 @@ class TableApplicants(tk.Toplevel):
         self.iconify()
 
     # Retorna el candidato seleccionada en la tabla
-    def selectedApplicant(self):
+    def selectedApplicant(self) -> Optional[Applicant]:
         selection = self.treeview.selection()
         if len(selection) == 0:
             return None
@@ -142,25 +142,26 @@ class TableApplicants(tk.Toplevel):
 
         return findApplicant(applicant)
 
-    def createVacancy(self):
+    def createApplicant(self):
         self.close()
         self.modal.open()
 
-    def destroyVacancy(self):
+    def destroyApplicant(self):
         applicant = self.selectedApplicant()
 
         if applicant is None:
             return
 
         title = appName()
-        message = '¿Quieres eliminar al candidato "' + applicant.first_name + ' ' + applicant.last_name + '"?'
-        response = messagebox.askokcancel(title=title, message=message)
+        message = '¿Quieres eliminar al candidato {0}?'.format(applicant)
+        isOk = messagebox.askokcancel(title=title, message=message, icon=messagebox.QUESTION, parent=self)
 
-        if response is None:
+        if not isOk:
             return
 
         removeApplicant(applicant)
-        notifySuccess('La cantidato "' + applicant.first_name + ' ' + applicant.last_name + '" se ha eliminado correctamente.')
+        message = 'La cantidato {0} se ha eliminado correctamente.'.format(applicant)
+        notifySuccess(message)
         self.reload()
 
     def showExperience(self):
@@ -171,7 +172,7 @@ class TableApplicants(tk.Toplevel):
 
         print(applicant)
 
-    def updateVacancy(self):
+    def updateApplicant(self):
         applicant = self.selectedApplicant()
 
         if applicant is None:

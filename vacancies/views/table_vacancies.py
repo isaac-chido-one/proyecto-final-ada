@@ -1,20 +1,20 @@
 import tkinter as tk
-from tkfontawesome import icon_to_image
 from tkinter import messagebox
 from tkinter import ttk
+from typing import Any, Optional
 from vacancies.entities.vacancy import Vacancy
 from vacancies.structures.app import forEachVacancy, findVacancy, removeVacancy
-from vacancies.utils import appName, notifySuccess
+from vacancies.utils import appName, createIcon, notifySuccess
 from vacancies.views.form_vacancy import FormVacancy
 
 class TableVacancies(tk.Toplevel):
 
-    def __init__(self, parentModal):
+    def __init__(self, parentModal: tk.Tk):
         super().__init__(parentModal)
         self.modal = FormVacancy(parentModal, self.onStore)
 
-        self.title(appName() + ' - Vacantes')
-        self.geometry("700x500")
+        self.title(appName('Vacantes'))
+        self.geometry('700x500')
         self.state('withdrawn')
         self.protocol('WM_DELETE_WINDOW', self.onClose)
         self.resizable(True, True)
@@ -34,22 +34,22 @@ class TableVacancies(tk.Toplevel):
         self.frameButtons.columnconfigure(0, weight=1)
 
         # button delete
-        self.iconDestroy = icon_to_image('trash', fill="#4267B2", scale_to_width=16)
+        self.iconDestroy = createIcon('trash')
         self.buttonDestroy = ttk.Button(self.frameButtons, text='Eliminar', image=self.iconDestroy, compound=tk.LEFT, command=lambda: self.destroyVacancy())
         self.buttonDestroy.grid(column=0, row=0, padx=5)
 
         # button applicants
-        self.iconApplicants = icon_to_image('user-tie', fill="#4267B2", scale_to_width=16)
+        self.iconApplicants = createIcon('user-tie')
         self.buttonApplicants = ttk.Button(self.frameButtons, text='Candidatos', image=self.iconApplicants, compound=tk.LEFT, command=lambda: self.showApplicants())
         self.buttonApplicants.grid(column=1, row=0, padx=5)
 
         # button edit
-        self.iconUpdate = icon_to_image('pen', fill="#4267B2", scale_to_width=16)
+        self.iconUpdate = createIcon('pen')
         self.buttonUpdate = ttk.Button(self.frameButtons, text='Editar', image=self.iconUpdate, compound=tk.LEFT, command=lambda: self.updateVacancy())
         self.buttonUpdate.grid(column=2, row=0, padx=5)
 
         # button new
-        self.iconCreate = icon_to_image('square-plus', fill="#4267B2", scale_to_width=16)
+        self.iconCreate = createIcon('square-plus')
         self.buttonCreate = ttk.Button(self.frameButtons, text='Nuevo', image=self.iconCreate, compound=tk.LEFT, command=lambda: self.createVacancy())
         self.buttonCreate.grid(column=3, row=0, padx=5)
 
@@ -84,7 +84,7 @@ class TableVacancies(tk.Toplevel):
         self.close()
 
     # Agregar una vacante a la tabla
-    def insertVacancy(self, vacancy, args):
+    def insertVacancy(self, vacancy: Vacancy, args: Any):
         i = args['i']
         values = [vacancy.title, vacancy.company, vacancy.location]
         tag = 'evenrow' if i % 2 == 0 else 'oddrow'
@@ -129,7 +129,7 @@ class TableVacancies(tk.Toplevel):
         self.iconify()
 
     # Retorna la vacante seleccionada en la tabla
-    def selectedVacancy(self):
+    def selectedVacancy(self) -> Optional[Vacancy]:
         selection = self.treeview.selection()
         if len(selection) == 0:
             return None
@@ -151,14 +151,15 @@ class TableVacancies(tk.Toplevel):
             return
 
         title = appName()
-        message = '¿Quieres eliminar la vacante "' + vacancy.title + '"?'
-        response = messagebox.askokcancel(title=title, message=message)
+        message = '¿Quieres eliminar la vacante {0}?'.format(vacancy)
+        isOk = messagebox.askokcancel(title=title, message=message, icon=messagebox.QUESTION, parent=self)
 
-        if response is None:
+        if not isOk:
             return
 
         removeVacancy(vacancy)
-        notifySuccess('La vacante "' + title + '" se ha eliminado correctamente.')
+        message = 'La vacante {0} se ha eliminado correctamente.'.format(vacancy)
+        notifySuccess(message)
         self.reload()
 
     def showApplicants(self):

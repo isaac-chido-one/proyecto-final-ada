@@ -1,8 +1,17 @@
-from slugify import slugify
+from typing import Optional
 
 class Vacancy:
 
-	def __init__(self, company = '', description = '', location = '', max_salary = None, min_salary = None, requirements = '', title = ''):
+	def __init__(
+			self,
+			company: str = '',
+			description: str = '',
+			location: str = '',
+			max_salary:Optional[float] = None,
+			min_salary:Optional[float] = None,
+			requirements: str = '',
+			title: str = ''
+	):
 		self.__company = company
 		self.__description = description
 		self.__location = location
@@ -12,72 +21,68 @@ class Vacancy:
 		self.__title = title
 
 	@property
-	def company(self):
+	def company(self) -> str:
 		return self.__company
 
 	@property
-	def description(self):
+	def description(self) -> str:
 		return self.__description
 
 	@property
-	def location(self):
+	def location(self) -> str:
 		return self.__location
 
 	@property
-	def max_salary(self):
+	def max_salary(self) -> Optional[float]:
 		return self.__max_salary
 
 	@property
-	def min_salary(self):
+	def min_salary(self) -> Optional[float]:
 		return self.__min_salary
 
 	@property
-	def requirements(self):
+	def requirements(self) -> str:
 		return self.__requirements
 
 	@property
-	def title(self):
+	def title(self) -> str:
 		return self.__title
 
 	@company.setter
-	def company(self, company):
+	def company(self, company: str):
 		self.__company = company
 
 	@description.setter
-	def description(self, description):
+	def description(self, description: str):
 		self.__description = description
 
 	@location.setter
-	def location(self, location):
+	def location(self, location: str):
 		self.__location = location
 
 	@max_salary.setter
-	def max_salary(self, max_salary):
+	def max_salary(self, max_salary: Optional[float]):
 		self.__max_salary = max_salary
 
 	@min_salary.setter
-	def min_salary(self, min_salary):
+	def min_salary(self, min_salary: Optional[float]):
 		self.__min_salary = min_salary
 
 	@requirements.setter
-	def requirements(self, requirements):
+	def requirements(self, requirements: str):
 		self.__requirements = requirements
 
 	@title.setter
-	def title(self, title):
+	def title(self, title: str):
 		self.__title = title
 
 	def __eq__(self, other):
 		return isinstance(other, Vacancy) and self.__company == other.__company and self.__title == other.__title and self.__location == other.__location
 
 	def __repr__(self):
-		return '{0};{1};{2}'.format(
-			slugify(self.__company),
-			slugify(self.__title),
-			slugify(self.__location)
-		)
+		return '"{0}"'.format(self.__title)
 
-	def to_dictionary(self):
+	def to_dictionary(self) -> dict:
 		return {
 			'company': self.__company,
 			'description': self.__description,
@@ -89,7 +94,7 @@ class Vacancy:
 		}
 
 	@staticmethod
-	def from_dictionary(dictionary):
+	def from_dictionary(dictionary: dict):
 		company = dictionary['company']
 		description = dictionary['description']
 		location = dictionary['location']

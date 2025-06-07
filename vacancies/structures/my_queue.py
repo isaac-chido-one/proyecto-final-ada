@@ -1,3 +1,4 @@
+from typing import Any
 from node import Node
 
 class Queue():
@@ -8,70 +9,53 @@ class Queue():
 
 	def Cima(self):
 		''' Mostrar el siguiente elemento que se sacaría (sin sacarlo). '''
-		return None if self.Vacia() else self.header.data
+		return None if self.Vacia() else self.__header.data # type: ignore
 
-	def Contiene(self, elemento):
-		'''
-		Comprobar si un elemento está en la estructura.
+	def Contiene(self, element: Any) -> bool:
+		''' Comprobar si un elemento está en la estructura. '''
+		return Node.contains(self.__header, element)
 
-		Returns
-		-------
-		bool
-		'''
-		return Node.contains(self.header, elemento)
-
-	def Desencolar(self):
+	def Desencolar(self) -> Any:
 		if self.Vacia():
 			return None
 
-		node = self.header
-		self.header = self.header.link
-		node.link = None
+		node = self.__header
+		self.__header = self.__header.link # type: ignore
+		node.link = None # type: ignore
 
-		if self.header is None:
-			self.last = None
+		if self.__header is None:
+			self.__last = None
 
-		return node.data
+		return node.data # type: ignore
 
-	def Encolar(self, elemento):
-		node = Node(elemento, None)
+	def Encolar(self, element: Any):
+		node = Node(element, None)
 
 		if self.Vacia():
-			self.header = node
+			self.__header = node
 		else:
-			self.last.link = node
+			self.__last.link = node # type: ignore
 
-		self.last = node
+		self.__last = node
 
 	def Inicializar(self):
-		self.header = None
-		self.last = None
+		self.__header = None
+		self.__last = None
 
 	def Limpiar(self):
 		self.Inicializar()
 
 	def Mostrar(self):
 		''' Mostrar el contenido de la estructura. '''
-		Node.print(self.header)
+		Node.print(self.__header)
 
-	def Primero(self):
-		node = Node.first(self.header)
+	def Primero(self) -> Any:
+		node = Node.first(self.__header)
 		return None if node is None else node.data
 
-	def Tamano(self):
-		'''
-		Contar el número de elementos.
+	def Tamano(self) -> int:
+		''' Contar el número de elementos. '''
+		return Node.length(self.__header)
 
-		Returns
-		-------
-		int
-		'''
-		return Node.length(self.header)
-
-	def Vacia(self):
-		'''
-		Returns
-		-------
-		bool
-		'''
-		return self.header is None and self.last is None
+	def Vacia(self) -> bool:
+		return self.__header is None and self.__last is None

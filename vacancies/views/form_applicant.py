@@ -1,9 +1,8 @@
 import tkinter as tk
 from tkinter import ttk
-from tkfontawesome import icon_to_image
 from vacancies.entities.applicant import Applicant
-from vacancies.structures.app import insertApplicant
-from vacancies.utils import appName, notifyAlert, notifySuccess
+from vacancies.structures.app import findApplicant, insertApplicant
+from vacancies.utils import appName, createIcon, notifyAlert, notifySuccess
 
 class FormApplicant(tk.Toplevel):
 
@@ -12,8 +11,8 @@ class FormApplicant(tk.Toplevel):
         self.applicant = None
         self.callback = callback
 
-        self.title(appName() + ' - Candidatos')
-        self.geometry("780x270")
+        self.title(appName('Candidatos'))
+        self.geometry('780x270')
         self.state('withdrawn')
         self.protocol('WM_DELETE_WINDOW', self.onClose)
 
@@ -22,36 +21,36 @@ class FormApplicant(tk.Toplevel):
         self.columnconfigure(1, weight=3)
 
         # first name
-        self.iconFirstName = icon_to_image('id-badge', fill="#4267B2", scale_to_width=16)
-        self.labelFirstName = ttk.Label(self, text="Nombres: *", image=self.iconFirstName, compound=tk.LEFT)
+        self.iconFirstName = createIcon('id-badge')
+        self.labelFirstName = ttk.Label(self, text='Nombres: *', image=self.iconFirstName, compound=tk.LEFT)
         self.labelFirstName.grid(column=0, row=0, sticky=tk.W, padx=5, pady=5)
         self.entryFirstName = ttk.Entry(self)
         self.entryFirstName.grid(column=1, row=0, sticky=tk.EW, padx=5, pady=5)
 
         # last name
-        self.iconLastName = icon_to_image('id-badge', fill="#4267B2", scale_to_width=16)
-        self.labelLastName = ttk.Label(self, text="Apellidos: *", image=self.iconLastName, compound=tk.LEFT)
+        self.iconLastName = createIcon('id-badge')
+        self.labelLastName = ttk.Label(self, text='Apellidos: *', image=self.iconLastName, compound=tk.LEFT)
         self.labelLastName.grid(column=0, row=1, sticky=tk.W, padx=5, pady=5)
         self.entryLastName = ttk.Entry(self)
         self.entryLastName.grid(column=1, row=1, sticky=tk.EW, padx=5, pady=5)
 
         # email
-        self.iconEmail = icon_to_image('at', fill="#4267B2", scale_to_width=16)
-        self.labelEmail = ttk.Label(self, text="E-mail:", image=self.iconEmail, compound=tk.LEFT)
+        self.iconEmail = createIcon('at')
+        self.labelEmail = ttk.Label(self, text='E-mail:', image=self.iconEmail, compound=tk.LEFT)
         self.labelEmail.grid(column=0, row=2, sticky=tk.W, padx=5, pady=5)
         self.entryEmail = ttk.Entry(self)
         self.entryEmail.grid(column=1, row=2, sticky=tk.EW, padx=5, pady=5)
 
         # phone
-        self.iconPhone = icon_to_image('phone', fill="#4267B2", scale_to_width=16)
-        self.labelPhone = ttk.Label(self, text="Teléfono:", image=self.iconPhone, compound=tk.LEFT)
+        self.iconPhone = createIcon('phone')
+        self.labelPhone = ttk.Label(self, text='Teléfono:', image=self.iconPhone, compound=tk.LEFT)
         self.labelPhone.grid(column=0, row=3, sticky=tk.W, padx=5, pady=5)
         self.entryPhone = ttk.Entry(self)
         self.entryPhone.grid(column=1, row=3, sticky=tk.EW, padx=5, pady=5)
 
         # resume
-        self.iconResume = icon_to_image('certificate', fill="#4267B2", scale_to_width=16)
-        self.labelResume = ttk.Label(self, text="Currículum:", image=self.iconResume, compound=tk.LEFT)
+        self.iconResume = createIcon('certificate')
+        self.labelResume = ttk.Label(self, text='Currículum:', image=self.iconResume, compound=tk.LEFT)
         self.labelResume.grid(column=0, row=4, sticky=tk.W, padx=5, pady=5)
         self.textResume = tk.Text(self, height=4, width=80)
         self.textResume.grid(column=1, row=4, sticky=tk.EW, padx=5, pady=5)
@@ -64,12 +63,12 @@ class FormApplicant(tk.Toplevel):
         self.frameButtons.columnconfigure(0, weight=1)
 
         # cancel button
-        self.iconCancel = icon_to_image('times', fill="#4267B2", scale_to_width=16)
+        self.iconCancel = createIcon('times')
         self.buttonCancel = ttk.Button(self.frameButtons, text='Cancelar', image=self.iconCancel, compound=tk.LEFT, command=lambda: self.close())
         self.buttonCancel.grid(column=0, row=0, padx=5)
 
         # accept button
-        self.iconStore = icon_to_image('check', fill="#4267B2", scale_to_width=16)
+        self.iconStore = createIcon('check')
         self.buttonStore = ttk.Button(self.frameButtons, text='Guardar', image=self.iconStore, compound=tk.LEFT, command=lambda: self.store())
         self.buttonStore.grid(column=1, row=0, padx=5)
 
@@ -97,6 +96,7 @@ class FormApplicant(tk.Toplevel):
 
     # Cerrar la ventana
     def close(self):
+        self.applicant = None
         self.withdraw()
 
     # Guadar la información de una candidato
@@ -125,18 +125,27 @@ class FormApplicant(tk.Toplevel):
         # if checkIfExists:
         #     notifyAlert('exists')
         #     return
+        newApplicant = Applicant(email, first_name, last_name, phone, resume)
+        currentApplicant = findApplicant(newApplicant)
 
         if self.applicant is None:
-            applicant = Applicant(email, first_name, last_name, phone, resume)
-            insertApplicant(applicant)
+            notExists = currentApplicant is None
+            if notExists:
+                insertApplicant(newApplicant)
         else:
-            self.applicant.email = email
-            self.applicant.first_name = first_name
-            self.applicant.last_name = last_name
-            self.applicant.phone = phone
-            self.applicant.resume = resume
-            self.applicant = None
+            notExists = currentApplicant is None or currentApplicant is self.applicant
+            if notExists:
+                self.applicant.email = email
+                self.applicant.first_name = first_name
+                self.applicant.last_name = last_name
+                self.applicant.phone = phone
+                self.applicant.resume = resume
 
         self.close()
-        notifySuccess('El candidato "' + first_name + ' ' + last_name + '" se ha guardado correctamente.')
+        if notExists:
+            message = 'El candidato {0} se ha guardado correctamente.'.format(newApplicant)
+            notifySuccess(message)
+        else:
+            message = 'El candidato {0} ya existe.'.format(newApplicant)
+            notifyAlert(message)
         self.callback()

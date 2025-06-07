@@ -1,4 +1,5 @@
 import json, os
+from typing import Any, Callable, Optional
 from vacancies.entities.applicant import Applicant
 from vacancies.entities.vacancy import Vacancy
 from vacancies.structures.stack import Stack
@@ -9,39 +10,39 @@ hashmapExperience = None
 listVacancies = None
 stackApplicants = Stack()
 
-def findApplicant(applicant):
+def findApplicant(applicant: Applicant) -> Optional[Applicant]:
 	global stackApplicants
 	return stackApplicants.find(applicant)
 
-def findVacancy(vacancy):
+def findVacancy(vacancy: Vacancy) -> Optional[Vacancy]:
 	global listVacancies
 	return Node.find(listVacancies, vacancy)
 
-def forEachApplicant(callback, args):
+def forEachApplicant(callback: Callable[[Applicant, Any], None], args):
 	global stackApplicants
 	stackApplicants.each(callback, args)
 
-def forEachVacancy(callback, args):
+def forEachVacancy(callback: Callable[[Vacancy, Any], None], args):
 	global listVacancies
 	Node.each(listVacancies, callback, args)
 
-def insertApplicant(applicant):
+def insertApplicant(applicant: Applicant):
 	global stackApplicants
 	stackApplicants.Apilar(applicant)
 
-def insertVacancy(vacancy):
+def insertVacancy(vacancy: Vacancy):
 	global listVacancies
 	listVacancies = Node(vacancy, listVacancies)
 
-def removeApplicant(applicant):
+def removeApplicant(applicant: Applicant):
 	global stackApplicants
 	stackApplicants.remove(applicant)
 
-def removeVacancy(vacancy):
+def removeVacancy(vacancy: Vacancy):
 	global listVacancies
 	listVacancies = Node.remove(listVacancies, vacancy)
 
-def loadStructures(source_file):
+def loadStructures(source_file: str):
 	global filename
 	directory = os.path.dirname(os.path.abspath(source_file)) + os.sep + 'storage'
 

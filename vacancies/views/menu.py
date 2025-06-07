@@ -9,12 +9,12 @@ from vacancies.views.table_vacancies import TableVacancies
 class Menu(tk.Tk):
     def __init__(self):
         super().__init__()
-        self.modalVacancies = None
-        self.modalApplicants = None
-        self.modalExperience = None
+        self.modalApplicants = TableApplicants(self)
+        self.modalExperience = FormExperience(self)
+        self.modalVacancies = TableVacancies(self)
 
         self.geometry('800x600')
-        self.title(appName() + ' - Home')
+        self.title(appName('Home'))
         self.resizable(True, True)
         self.rowconfigure(0, weight=1)
         self.columnconfigure(0, weight=1)
@@ -55,20 +55,14 @@ class Menu(tk.Tk):
         self.labelAuthor = ttk.Label(self.frame, text='Powered by: Perla Dueñas, Herón Ortiz & Isaac Rojas')
         self.labelAuthor.grid(column=0, row=1, columnspan=6, sticky=tk.SE)
 
-    # Abre la ventana de vacantes
-    def openModalVacancies(self):
-        if self.modalVacancies is None:
-            self.modalVacancies = TableVacancies(self)
-        self.modalVacancies.open()
-
     # Abre la ventana de candidatos
     def openModalApplicants(self):
-        if self.modalApplicants is None:
-            self.modalApplicants = TableApplicants(self)
         self.modalApplicants.open()
 
     # Abre la ventana de experiencia
     def openModalExperience(self):
-        if self.modalExperience is None:
-            self.modalExperience = FormExperience(self)
         self.modalExperience.open()
+
+    # Abre la ventana de vacantes
+    def openModalVacancies(self):
+        self.modalVacancies.open()
