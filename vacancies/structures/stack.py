@@ -60,3 +60,23 @@ class Stack():
 
 	def remove(self, element: Any):
 		self.__node = Node.remove(self.__node, element)
+
+	def buildArray(self, element: Any, array):
+		array.append(element)
+
+	def insertSort(self, field: str):
+		array = []
+		Node.each(self.__node, self.buildArray, array)
+
+		for i in range(1, len(array)):
+			element = array[i]
+			j = i
+			while j > 0 and element.compare(array[j - 1], field) > 0:
+				array[j] = array[j - 1]
+				j -= 1
+			array[j] = element
+
+		self.Limpiar()
+
+		for element in array:
+			self.Apilar(element)

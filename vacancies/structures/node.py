@@ -78,3 +78,35 @@ class Node():
 		node.__link = Node.remove(node.__link, element)
 
 		return node
+
+	@staticmethod
+	def iterateBubleSort(node, field: str):
+		if node is None or node.__link is None:
+			return
+
+		result = node.__data.compare(node.__link.__data, field)
+
+		if result > 0:
+			pivot = node.__link.__data
+			node.__link.__data = node.__data
+			node.__data = pivot
+
+		Node.iterateBubleSort(node.__link, field)
+
+	@staticmethod
+	def bubleSort(node, field: str):
+		i = node
+		while i is not None:
+			j = node
+
+			while i is not j:
+				result = i.__data.compare(j.__data, field)
+
+				if result < 0:
+					pivot = i.__data
+					i.__data = j.__data
+					j.__data = pivot
+
+				j = j.__link
+
+			i = i.__link

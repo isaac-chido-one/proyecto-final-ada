@@ -1,4 +1,5 @@
 import tkinter as tk
+import tksvg
 from notifypy import Notify
 from tkfontawesome import icon_to_image
 from typing import Optional
@@ -12,7 +13,7 @@ def appName(sufix:Optional[str] = None) -> str:
 
     return name
 
-def createIcon(awesomeName: str):
+def createIcon(awesomeName: str) -> tksvg.SvgImage:
     return icon_to_image(awesomeName, fill='#4267B2', scale_to_width=16)
 
 # Notificación de éxito

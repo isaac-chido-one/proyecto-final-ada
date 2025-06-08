@@ -3,7 +3,7 @@ from tkinter import messagebox
 from tkinter import ttk
 from typing import Any, Optional
 from vacancies.entities.vacancy import Vacancy
-from vacancies.structures.app import forEachVacancy, findVacancy, removeVacancy
+from vacancies.structures.app import forEachVacancy, findVacancy, removeVacancy, sortVacancies
 from vacancies.utils import appName, createIcon, notifySuccess
 from vacancies.views.form_vacancy import FormVacancy
 
@@ -66,10 +66,29 @@ class TableVacancies(tk.Toplevel):
         self.treeview.column('Locación', anchor=tk.W)
 
         # Create the headings
+        self.iconSort = createIcon('arrow-down-a-z')
         self.treeview.heading('#0', text='', anchor=tk.W)
-        self.treeview.heading('Puesto', text='Puesto', anchor=tk.W)
-        self.treeview.heading('Empresa', text='Empresa', anchor=tk.W)
-        self.treeview.heading('Locación', text='Locación', anchor=tk.W)
+        self.treeview.heading(
+            'Puesto',
+            text='Puesto',
+            anchor=tk.W,
+            image=self.iconSort,
+            command=self.sortByTitle
+        )
+        self.treeview.heading(
+            'Empresa',
+            text='Empresa',
+            anchor=tk.W,
+            image=self.iconSort,
+            command=self.sortByCompany
+        )
+        self.treeview.heading(
+            'Locación',
+            text='Locación',
+            anchor=tk.W,
+            image=self.iconSort,
+            command=self.sortByLocation
+        )
 
         # Configure alternating row colors
         self.treeview.tag_configure('oddrow', background='#E8E8E8')
@@ -178,3 +197,15 @@ class TableVacancies(tk.Toplevel):
 
         self.close()
         self.modal.open(vacancy)
+
+    def sortByCompany(self):
+        sortVacancies('company')
+        self.reload()
+
+    def sortByLocation(self):
+        sortVacancies('location')
+        self.reload()
+
+    def sortByTitle(self):
+        sortVacancies('title')
+        self.reload()

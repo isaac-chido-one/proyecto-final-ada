@@ -82,6 +82,23 @@ class Vacancy:
 	def __repr__(self):
 		return '"{0}"'.format(self.__title)
 
+	def compare(self, other, attribute_name) -> int:
+		a = getattr(self, attribute_name)
+		b = getattr(other, attribute_name)
+
+		if a is None and b is None:
+			return 0
+		elif a is None:
+			return -1
+		elif b is None:
+			return 1
+
+		if attribute_name != 'max_salary' and attribute_name != 'min_salary':
+			a = a.lower()
+			b = b.lower()
+
+		return 0 if a == b else (-1 if a < b else 1)
+
 	def to_dictionary(self) -> dict:
 		return {
 			'company': self.__company,

@@ -42,6 +42,13 @@ def removeVacancy(vacancy: Vacancy):
 	global listVacancies
 	listVacancies = Node.remove(listVacancies, vacancy)
 
+def sortApplicants(field: str):
+	global stackApplicants
+	stackApplicants.insertSort(field)
+
+def sortVacancies(field: str):
+	Node.bubleSort(listVacancies, field)
+
 def loadStructures(source_file: str):
 	global filename
 	directory = os.path.dirname(os.path.abspath(source_file)) + os.sep + 'storage'

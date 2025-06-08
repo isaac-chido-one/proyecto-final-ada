@@ -3,7 +3,7 @@ from tkinter import messagebox
 from tkinter import ttk
 from typing import Any, Optional
 from vacancies.entities.applicant import Applicant
-from vacancies.structures.app import findApplicant, forEachApplicant, removeApplicant
+from vacancies.structures.app import findApplicant, forEachApplicant, removeApplicant, sortApplicants
 from vacancies.utils import appName, createIcon, notifySuccess
 from vacancies.views.form_applicant import FormApplicant
 
@@ -67,11 +67,36 @@ class TableApplicants(tk.Toplevel):
         self.treeview.column('Teléfono', anchor=tk.W)
 
         # Create the headings
+        self.iconSort = createIcon('arrow-down-a-z')
         self.treeview.heading('#0', text='', anchor=tk.W)
-        self.treeview.heading('Nombres', text='Nombres', anchor=tk.W)
-        self.treeview.heading('Apellidos', text='Apellidos', anchor=tk.W)
-        self.treeview.heading('Correo', text='Correo', anchor=tk.W)
-        self.treeview.heading('Teléfono', text='Teléfono', anchor=tk.W)
+        self.treeview.heading(
+            'Nombres',
+            text='Nombres',
+            anchor=tk.W,
+            image=self.iconSort,
+            command=self.sortByFirstName
+        )
+        self.treeview.heading(
+            'Apellidos',
+            text='Apellidos',
+            anchor=tk.W,
+            image=self.iconSort,
+            command=self.sortByLastName
+        )
+        self.treeview.heading(
+            'Correo',
+            text='Correo',
+            anchor=tk.W,
+            image=self.iconSort,
+            command=self.sortByEmail
+        )
+        self.treeview.heading(
+            'Teléfono',
+            text='Teléfono',
+            anchor=tk.W,
+            image=self.iconSort,
+            command=self.sortByPhone
+        )
 
         # Configure alternating row colors
         self.treeview.tag_configure('oddrow', background='#E8E8E8')
@@ -180,3 +205,19 @@ class TableApplicants(tk.Toplevel):
 
         self.close()
         self.modal.open(applicant)
+
+    def sortByEmail(self):
+        sortApplicants('email')
+        self.reload()
+
+    def sortByFirstName(self):
+        sortApplicants('first_name')
+        self.reload()
+
+    def sortByLastName(self):
+        sortApplicants('last_name')
+        self.reload()
+
+    def sortByPhone(self):
+        sortApplicants('phone')
+        self.reload()
