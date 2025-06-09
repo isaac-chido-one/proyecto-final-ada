@@ -64,8 +64,6 @@ def loadStructures(source_file: str):
 	with open(filename) as json_file:
 		dictionary = json.load(json_file)
 
-	print(dictionary)
-
 	for elem in dictionary['applicants']:
 		applicant = Applicant.from_dictionary(elem)
 		insertApplicant(applicant)
@@ -73,6 +71,16 @@ def loadStructures(source_file: str):
 	for elem in dictionary['vacancies']:
 		vacancy = Vacancy.from_dictionary(elem)
 		insertVacancy(vacancy)
+
+		if 'applicants' in elem:
+			for row in elem['applicants']:
+				first_name = row['first_name']
+				last_name = row['last_name']
+				applicantForFind = Applicant(first_name=first_name, last_name=last_name)
+				applicant = findApplicant(applicantForFind)
+
+				if applicant is not None:
+					vacancy.applicants.Apilar(applicant)
 
 def to_dictionary(data, array):
 	array.append(data.to_dictionary())

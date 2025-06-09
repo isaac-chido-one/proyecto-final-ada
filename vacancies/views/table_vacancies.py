@@ -6,17 +6,19 @@ from vacancies.entities.vacancy import Vacancy
 from vacancies.structures.app import forEachVacancy, findVacancy, removeVacancy, sortVacancies
 from vacancies.utils import appName, createIcon, notifySuccess
 from vacancies.views.form_vacancy import FormVacancy
+from vacancies.views.table_postulations import TablePostulations
 
 class TableVacancies(tk.Toplevel):
 
     def __init__(self, parentModal: tk.Tk):
         super().__init__(parentModal)
-        self.modal = FormVacancy(parentModal, self.onStore)
+        self.modalPostulations = TablePostulations(self, self.open)
+        self.modalCreate = FormVacancy(self, self.open)
 
         self.title(appName('Vacantes'))
         self.geometry('700x500')
         self.state('withdrawn')
-        self.protocol('WM_DELETE_WINDOW', self.onClose)
+        self.protocol('WM_DELETE_WINDOW', self.close)
         self.resizable(True, True)
 
         # configure the grid
@@ -57,13 +59,14 @@ class TableVacancies(tk.Toplevel):
         self.treeview = ttk.Treeview(self)
 
         # Define the columns
-        self.treeview['columns'] = ('Puesto', 'Empresa', 'Locación')
+        self.treeview['columns'] = ('Puesto', 'Empresa', 'Locación', 'Candidatos')
 
         # Format the columns
         self.treeview.column('#0', width=0, stretch=tk.NO)
         self.treeview.column('Puesto', anchor=tk.W)
         self.treeview.column('Empresa', anchor=tk.W)
         self.treeview.column('Locación', anchor=tk.W)
+        self.treeview.column('Candidatos', anchor=tk.W)
 
         # Create the headings
         self.iconSort = createIcon('arrow-down-a-z')
@@ -89,6 +92,7 @@ class TableVacancies(tk.Toplevel):
             image=self.iconSort,
             command=self.sortByLocation
         )
+        self.treeview.heading('Candidatos', text='Candidatos', anchor=tk.W)
 
         # Configure alternating row colors
         self.treeview.tag_configure('oddrow', background='#E8E8E8')
@@ -98,14 +102,11 @@ class TableVacancies(tk.Toplevel):
         self.treeview.grid(row=1, column=0, sticky=tk.NSEW, pady=10)
         self.treeview.bind('<<TreeviewSelect>>', self.onSelect)
 
-    # Evento al cerrar la ventana
-    def onClose(self):
-        self.close()
-
     # Agregar una vacante a la tabla
     def insertVacancy(self, vacancy: Vacancy, args: Any):
         i = args['i']
-        values = [vacancy.title, vacancy.company, vacancy.location]
+        applicants = vacancy.applicants.Tamano()
+        values = [vacancy.title, vacancy.company, vacancy.location, applicants]
         tag = 'evenrow' if i % 2 == 0 else 'oddrow'
         self.treeview.insert(parent='', index=i, iid=i, values=values, tags=(tag,))
         args['i'] += 1
@@ -143,10 +144,6 @@ class TableVacancies(tk.Toplevel):
         self.buttonDestroy.config(state=state)
         self.buttonUpdate.config(state=state)
 
-    def onStore(self):
-        self.reload()
-        self.iconify()
-
     # Retorna la vacante seleccionada en la tabla
     def selectedVacancy(self) -> Optional[Vacancy]:
         selection = self.treeview.selection()
@@ -161,7 +158,7 @@ class TableVacancies(tk.Toplevel):
 
     def createVacancy(self):
         self.close()
-        self.modal.open()
+        self.modalCreate.open()
 
     def destroyVacancy(self):
         vacancy = self.selectedVacancy()
@@ -187,7 +184,8 @@ class TableVacancies(tk.Toplevel):
         if vacancy is None:
             return
 
-        print(vacancy)
+        self.close()
+        self.modalPostulations.open(vacancy)
 
     def updateVacancy(self):
         vacancy = self.selectedVacancy()
@@ -196,7 +194,7 @@ class TableVacancies(tk.Toplevel):
             return
 
         self.close()
-        self.modal.open(vacancy)
+        self.modalCreate.open(vacancy)
 
     def sortByCompany(self):
         sortVacancies('company')

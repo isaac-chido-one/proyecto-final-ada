@@ -1,13 +1,14 @@
 import re
 import tkinter as tk
 from tkinter import ttk
+from typing import Callable
 from vacancies.entities.vacancy import Vacancy
 from vacancies.structures.app import findVacancy, insertVacancy
 from vacancies.utils import appName, createIcon, notifyAlert, notifySuccess
 
 class FormVacancy(tk.Toplevel):
 
-    def __init__(self, parentModal, callback):
+    def __init__(self, parentModal: tk.Toplevel, callback: Callable[[], None]):
         super().__init__(parentModal)
         self.callback = callback
         self.vacancy = None
@@ -15,7 +16,7 @@ class FormVacancy(tk.Toplevel):
         self.title(appName('Vacantes'))
         self.geometry('800x400')
         self.state('withdrawn')
-        self.protocol('WM_DELETE_WINDOW', self.onClose)
+        self.protocol('WM_DELETE_WINDOW', self.close)
 
         # configure the grid
         self.columnconfigure(0, weight=1)
@@ -87,10 +88,6 @@ class FormVacancy(tk.Toplevel):
         self.buttonStore = ttk.Button(self.frameButtons, text='Guardar', image=self.iconStore, compound=tk.LEFT, command=lambda: self.store())
         self.buttonStore.grid(column=1, row=0, padx=5)
 
-    # Evento al cerrar la ventana
-    def onClose(self):
-        self.close()
-
     # Abrir la ventana
     def open(self, vacancy = None):
         self.vacancy = vacancy
@@ -115,8 +112,8 @@ class FormVacancy(tk.Toplevel):
 
     # Cerrar la ventana
     def close(self):
-        self.vacancy = None
         self.withdraw()
+        self.callback()
 
     # Guadar la información de una vacante
     def store(self):
@@ -180,11 +177,10 @@ class FormVacancy(tk.Toplevel):
                 self.vacancy.requirements = requirements
                 self.vacancy.title = title
 
-        self.close()
         if notExists:
             message = 'La vacante {0} se ha guardado correctamente.'.format(newVacancy)
             notifySuccess(message)
         else:
             message = 'La vacante {0} ya existe.'.format(newVacancy)
             notifyAlert(message)
-        self.callback()
+        self.close()

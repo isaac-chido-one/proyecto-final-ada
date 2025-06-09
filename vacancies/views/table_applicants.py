@@ -38,7 +38,7 @@ class TableApplicants(tk.Toplevel):
         self.buttonDestroy = ttk.Button(self.frameButtons, text='Eliminar', image=self.iconDestroy, compound=tk.LEFT, command=lambda: self.destroyApplicant())
         self.buttonDestroy.grid(column=0, row=0, padx=5)
 
-        # button applicants
+        # button experience
         self.iconApplicants = createIcon('user-tie')
         self.buttonExperience = ttk.Button(self.frameButtons, text='Experiencia', image=self.iconApplicants, compound=tk.LEFT, command=lambda: self.showExperience())
         self.buttonExperience.grid(column=1, row=0, padx=5)
@@ -129,7 +129,7 @@ class TableApplicants(tk.Toplevel):
         args = {'i': 0}
         forEachApplicant(self.insertApplicant, args)
 
-        # disable buttons destroy and update
+        # disable buttons destroy, experience and update
         self.buttonExperience.config(state=tk.DISABLED)
         self.buttonDestroy.config(state=tk.DISABLED)
         self.buttonUpdate.config(state=tk.DISABLED)
@@ -158,6 +158,7 @@ class TableApplicants(tk.Toplevel):
     # Retorna el candidato seleccionada en la tabla
     def selectedApplicant(self) -> Optional[Applicant]:
         selection = self.treeview.selection()
+
         if len(selection) == 0:
             return None
 

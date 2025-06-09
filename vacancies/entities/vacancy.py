@@ -1,4 +1,6 @@
-from typing import Optional
+from typing import Any, Callable, Optional
+from vacancies.entities.applicant import Applicant
+from vacancies.structures.stack import Stack
 
 class Vacancy:
 
@@ -12,6 +14,7 @@ class Vacancy:
 			requirements: str = '',
 			title: str = ''
 	):
+		self.__applicants = Stack()
 		self.__company = company
 		self.__description = description
 		self.__location = location
@@ -19,6 +22,10 @@ class Vacancy:
 		self.__min_salary = min_salary
 		self.__requirements = requirements
 		self.__title = title
+
+	@property
+	def applicants(self) -> Stack:
+		return self.__applicants
 
 	@property
 	def company(self) -> str:
@@ -99,8 +106,18 @@ class Vacancy:
 
 		return 0 if a == b else (-1 if a < b else 1)
 
+	def buildApplicantsArray(self, applicant: Applicant, array):
+		array.append({
+			'first_name': applicant.first_name,
+			'last_name': applicant.last_name
+		})
+
 	def to_dictionary(self) -> dict:
+		applicants = []
+		self.applicants.each(self.buildApplicantsArray, applicants)
+
 		return {
+			'applicants': applicants,
 			'company': self.__company,
 			'description': self.__description,
 			'location': self.__location,
@@ -119,4 +136,5 @@ class Vacancy:
 		min_salary = dictionary['min_salary']
 		requirements = dictionary['requirements']
 		title = dictionary['title']
+
 		return Vacancy(company, description, location, max_salary, min_salary, requirements, title)

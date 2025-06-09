@@ -11,4 +11,6 @@ Proyecto Final Análisis y Diseño de  Algoritmos
 7. Instalar dependencias: `pip install -r requirements.txt`
 8. Ejecutar la aplicación: `python app.py`
 
+Al finalizar la aplicación se guarda la información en formato json en el archivo `storage/vacancies.json`
+Para visualizar la información guarda: `cat storage/vacancies.json | jq`
 Listar dependencias: `pip freeze > requirements.txt`
