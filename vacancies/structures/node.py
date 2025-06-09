@@ -80,20 +80,6 @@ class Node():
 		return node
 
 	@staticmethod
-	def iterateBubleSort(node, field: str):
-		if node is None or node.__link is None:
-			return
-
-		result = node.__data.compare(node.__link.__data, field)
-
-		if result > 0:
-			pivot = node.__link.__data
-			node.__link.__data = node.__data
-			node.__data = pivot
-
-		Node.iterateBubleSort(node.__link, field)
-
-	@staticmethod
 	def bubleSort(node, field: str):
 		i = node
 		while i is not None:

@@ -16,7 +16,7 @@ class TableExperience(tk.Toplevel):
 		self.applicant = Applicant()
 
 		self.title(appName('Experiencia por empleado'))
-		self.geometry('900x500')
+		self.geometry('1000x500')
 		self.state('withdrawn')
 		self.protocol('WM_DELETE_WINDOW', self.close)
 		self.resizable(True, True)
@@ -64,12 +64,37 @@ class TableExperience(tk.Toplevel):
 		self.treeview.column('Año final', anchor=tk.W)
 
 		# Create the headings
+		self.iconSort = createIcon('arrow-down-a-z')
 		self.treeview.heading('#0', text='', anchor=tk.W)
 		self.treeview.heading('Tipo', text='Tipo', anchor=tk.W)
-		self.treeview.heading('Puesto-Estudio', text='Puesto-Estudio', anchor=tk.W,)
-		self.treeview.heading('Empresa-Inst.', text='Empresa-Inst.', anchor=tk.W)
-		self.treeview.heading('Año inicial', text='Año inicial', anchor=tk.W)
-		self.treeview.heading('Año final', text='Año final', anchor=tk.W)
+		self.treeview.heading(
+			'Puesto-Estudio',
+			text='Puesto-Estudio',
+			anchor=tk.W,
+			image=self.iconSort,
+			command=self.sortByTitle
+		)
+		self.treeview.heading(
+			'Empresa-Inst.',
+			text='Empresa-Inst.',
+			anchor=tk.W,
+			image=self.iconSort,
+			command=self.sortByInstitution
+		)
+		self.treeview.heading(
+			'Año inicial',
+			text='Año inicial',
+			anchor=tk.W,
+			image=self.iconSort,
+			command=self.sortByStartingYear
+		)
+		self.treeview.heading(
+			'Año final',
+			text='Año final',
+			anchor=tk.W,
+			image=self.iconSort,
+			command=self.sortByEndingYear
+		)
 
 		# Configure alternating row colors
 		self.treeview.tag_configure('oddrow', background='#E8E8E8')
@@ -177,3 +202,19 @@ class TableExperience(tk.Toplevel):
 
 		self.withdraw()
 		self.modal.open(self.applicant, experience)
+
+	def sortByTitle(self):
+		self.applicant.experience.insertSort('title')
+		self.reload()
+
+	def sortByInstitution(self):
+		self.applicant.experience.insertSort('institution')
+		self.reload()
+
+	def sortByStartingYear(self):
+		self.applicant.experience.insertSort('starting_year')
+		self.reload()
+
+	def sortByEndingYear(self):
+		self.applicant.experience.insertSort('ending_year')
+		self.reload()

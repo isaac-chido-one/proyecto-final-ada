@@ -68,7 +68,7 @@ class Applicant:
 	def __repr__(self):
 		return '"{0} {1}"'.format(self.__first_name, self.__last_name)
 
-	def compare(self, other, attribute_name) -> int:
+	def compare(self, other, attribute_name: str) -> int:
 		a = getattr(self, attribute_name)
 		b = getattr(other, attribute_name)
 		a = a.lower()

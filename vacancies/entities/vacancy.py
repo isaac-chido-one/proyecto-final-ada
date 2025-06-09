@@ -89,7 +89,7 @@ class Vacancy:
 	def __repr__(self):
 		return '"{0}"'.format(self.__title)
 
-	def compare(self, other, attribute_name) -> int:
+	def compare(self, other, attribute_name: str) -> int:
 		a = getattr(self, attribute_name)
 		b = getattr(other, attribute_name)
 

@@ -4,7 +4,7 @@ from typing import Any, Callable, Optional
 from vacancies.entities.applicant import Applicant
 from vacancies.entities.vacancy import Vacancy
 from vacancies.structures.app import forEachApplicant, findApplicant
-from vacancies.utils import appName, createIcon, notifySuccess
+from vacancies.utils import appName, appendToArray, createIcon, notifySuccess
 
 class SelectApplicant(tk.Toplevel):
 
@@ -71,10 +71,6 @@ class SelectApplicant(tk.Toplevel):
 		self.buttonApply = ttk.Button(self.frameButtons, text='Postular', image=self.iconApply, compound=tk.LEFT, command=lambda: self.apply())
 		self.buttonApply.grid(column=1, row=0, padx=5)
 
-	# Agregar un candidato a la tabla
-	def insertApplicant(self, applicant: Applicant, applicants):
-		applicants.append(applicant)
-
 	def removeApplicant(self, applicant: Applicant, applicants):
 		applicants.remove(applicant)
 
@@ -87,7 +83,7 @@ class SelectApplicant(tk.Toplevel):
 
 		# fill the treeview
 		applicants = []
-		forEachApplicant(self.insertApplicant, applicants)
+		forEachApplicant(appendToArray, applicants)
 		self.vacancy.applicants.each(self.removeApplicant, applicants)
 		i = 0
 

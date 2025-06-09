@@ -2,7 +2,7 @@ import tkinter as tk
 import tksvg
 from notifypy import Notify
 from tkfontawesome import icon_to_image
-from typing import Optional
+from typing import Any, Optional
 
 # Obtiene el nombre de la aplicación
 def appName(sufix:Optional[str] = None) -> str:
@@ -12,6 +12,9 @@ def appName(sufix:Optional[str] = None) -> str:
         name += ' - ' + sufix
 
     return name
+
+def appendToArray(element: Any, array):
+    array.append(element)
 
 def createIcon(awesomeName: str) -> tksvg.SvgImage:
     return icon_to_image(awesomeName, fill='#4267B2', scale_to_width=16)

@@ -91,3 +91,20 @@ class Experience:
 		type = dictionary['type']
 
 		return Experience(ending_year=ending_year, institution=institution, starting_year=starting_year, title=title, type=type)
+
+	def compare(self, other, attribute_name: str) -> int:
+		a = getattr(self, attribute_name)
+		b = getattr(other, attribute_name)
+
+		if a is None and b is None:
+			return 0
+		elif a is None:
+			return -1
+		elif b is None:
+			return 1
+
+		if attribute_name != 'ending_year' and attribute_name != 'starting_year':
+			a = a.lower()
+			b = b.lower()
+
+		return 0 if a == b else (-1 if a < b else 1)
