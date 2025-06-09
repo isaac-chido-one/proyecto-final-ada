@@ -1,3 +1,4 @@
+from vacancies.utils import appendDictionaryToArray
 from vacancies.entities.experience import Experience
 from vacancies.structures.hash_table import HashTable
 
@@ -99,14 +100,10 @@ class Applicant:
 
 		return 0 if a == b else (-1 if a < b else 1)
 
-	def buildExperienceArray(self, experience: Experience, array: list):
-		''' Agrega los elementos convertidos a diccionario de una lista ligada a un arreglo. '''
-		array.append(experience.to_dictionary())
-
 	def to_dictionary(self) -> dict:
 		''' Convierte una instancia a diccionario. Para guardar en archivo json. '''
 		experience = []
-		self.experience.each(self.buildExperienceArray, experience)
+		self.experience.each(appendDictionaryToArray, experience)
 
 		return {
 			'email': self.__email,

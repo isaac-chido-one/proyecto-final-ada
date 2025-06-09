@@ -1,7 +1,13 @@
 from typing import Any, Callable
 
 class Node():
-	''' Clase nodo para implementar las estructuras y guardar los datos manejados. '''
+	'''
+	Clase nodo para implementar las estructuras y guardar los datos manejados.
+
+	Attributes:
+		data (Any): La información guardada.
+		link (Node): Enlace al siguente nodo.
+	'''
 
 	def __init__(self, data: Any, link):
 		self.__data = data
@@ -9,15 +15,19 @@ class Node():
 
 	@property
 	def data(self) -> Any:
+		''' La información guardada '''
 		return self.__data
 
 	@data.setter
 	def data(self, data: Any):
+		''' La información guardada '''
 		self.__data = data
 
 	@property
 	def link(self):
 		'''
+		Enlace al siguente nodo
+
 		Returns
 		-------
 		Node
@@ -26,6 +36,7 @@ class Node():
 
 	@link.setter
 	def link(self, link):
+		''' Enlace al siguente nodo '''
 		self.__link = link
 
 	@staticmethod
@@ -35,7 +46,7 @@ class Node():
 
 	@staticmethod
 	def contains(node, element: Any) -> bool:
-		''' Comprobar si un elemento está en la estructura. '''
+		''' Comprueba si la estructura contiene el elemento a buscar. '''
 		return False if node is None else element == node.__data or Node.contains(node.__link, element)
 
 	@staticmethod
@@ -44,15 +55,6 @@ class Node():
 		if node is not None:
 			print(node.__data)
 			Node.print(node.__link)
-
-	@staticmethod
-	def first(node):
-		'''
-		Returns
-		-------
-		Node
-		'''
-		return None if node is None else (node if node.__link is None else Node.first(node.__link))
 
 	@staticmethod
 	def each(node, callback: Callable[[Any, Any], None], args: Any):
@@ -68,7 +70,7 @@ class Node():
 
 	@staticmethod
 	def remove(node, element: Any):
-		''' Busca un elemento por comparación y lo quita de la lista '''
+		''' Busca un elemento por comparación y lo quita de la lista. '''
 		if node is None:
 			return None
 
@@ -81,6 +83,7 @@ class Node():
 
 	@staticmethod
 	def bubleSort(node, field: str):
+		''' Ordena la lista de menor a mayor con el algoritmo Bubble Sort. '''
 		i = node
 		while i is not None:
 			j = node

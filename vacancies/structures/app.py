@@ -5,52 +5,74 @@ from vacancies.entities.experience import Experience
 from vacancies.entities.vacancy import Vacancy
 from vacancies.structures.stack import Stack
 from vacancies.structures.node import Node
+from vacancies.utils import appendDictionaryToArray
 
+# Ruta del archivo json para guardar y leer la información de las estructuras.
 filename = ''
-hashmapExperience = None
+
+# Pila global para guardar todas las vacantes.
 listVacancies = None
+
+# Pila global para guardar todos los candidatos.
 stackApplicants = Stack()
 
 def findApplicant(applicant: Applicant) -> Optional[Applicant]:
+	''' Busca un candidato en la pila global de candidatos. '''
 	global stackApplicants
 	return stackApplicants.find(applicant)
 
 def findVacancy(vacancy: Vacancy) -> Optional[Vacancy]:
+	''' Busca una vacante en la lista global de vacantes. '''
 	global listVacancies
 	return Node.find(listVacancies, vacancy)
 
 def forEachApplicant(callback: Callable[[Applicant, Any], None], args):
+	''' Ejecuta una función por cada candidato de la pila global. '''
 	global stackApplicants
 	stackApplicants.each(callback, args)
 
 def forEachVacancy(callback: Callable[[Vacancy, Any], None], args):
+	''' Ejecuta una función por cada vacante de la lista global. '''
 	global listVacancies
 	Node.each(listVacancies, callback, args)
 
 def insertApplicant(applicant: Applicant):
+	''' Agrega un candidato a la pila global. '''
 	global stackApplicants
 	stackApplicants.Apilar(applicant)
 
 def insertVacancy(vacancy: Vacancy):
+	''' Agrega una vacante a la lista global. '''
 	global listVacancies
 	listVacancies = Node(vacancy, listVacancies)
 
 def removeApplicant(applicant: Applicant):
+	''' Quita un candidato de la pila global. '''
 	global stackApplicants
 	stackApplicants.remove(applicant)
 
 def removeVacancy(vacancy: Vacancy):
+	''' Quita una vacante de la lista global. '''
 	global listVacancies
 	listVacancies = Node.remove(listVacancies, vacancy)
 
 def sortApplicants(field: str):
+	'''
+	Ordena la pila global de candidatos de menor a mayor por el atributo
+	especificado con el algoritmo Insertion Sort.
+	'''
 	global stackApplicants
 	stackApplicants.insertSort(field)
 
 def sortVacancies(field: str):
+	'''
+	Ordena la lista global de vacantes de menor a mayor por el atributo
+	especificado con el algoritmo Bubble Sort.
+	'''
 	Node.bubleSort(listVacancies, field)
 
 def loadStructures(source_file: str):
+	''' Obtiene información desde un archivo json y la guarda en las estructuras correspondientes. '''
 	global filename
 	directory = os.path.dirname(os.path.abspath(source_file)) + os.sep + 'storage'
 
@@ -89,15 +111,13 @@ def loadStructures(source_file: str):
 				if applicant is not None:
 					vacancy.applicants.Apilar(applicant)
 
-def to_dictionary(data, array):
-	array.append(data.to_dictionary())
-
 def storeStructures():
+	''' Guarda la información de las estructuras en un archivo json. '''
 	global filename, stackApplicants, listVacancies
 	applicants = []
-	stackApplicants.each(to_dictionary, applicants)
+	stackApplicants.each(appendDictionaryToArray, applicants)
 	vacancies = []
-	Node.each(listVacancies, to_dictionary, vacancies)
+	Node.each(listVacancies, appendDictionaryToArray, vacancies)
 	dictionary = {
 		'applicants': applicants,
 		'vacancies': vacancies

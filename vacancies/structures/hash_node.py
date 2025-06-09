@@ -1,6 +1,12 @@
 from typing import Any
 
 class HashNode():
+	'''
+	Clase nodo hash
+
+	Attributes:
+		value (Any): La información guardada.
+	'''
 
 	def __init__(self, key, value: Any):
 		self.__key = key
@@ -8,6 +14,7 @@ class HashNode():
 
 	@property
 	def value(self) -> Any:
+		''' La información guardada '''
 		return self.__value
 
 	def __eq__(self, other):

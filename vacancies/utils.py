@@ -17,6 +17,10 @@ def appendToArray(element: Any, array):
     ''' Agrega los elementos de una lista ligada a un arreglo. '''
     array.append(element)
 
+def appendDictionaryToArray(element, array):
+	''' Agrega los elementos convertidos a diccionario de una lista ligada a un arreglo. '''
+	array.append(element.to_dictionary())
+
 def createIcon(awesomeName: str) -> tksvg.SvgImage:
     '''
     Crea íconos a partir de la fuente awesome.
