@@ -1,6 +1,7 @@
 from typing import Optional
 
 def insertsort(array, field: str):
+	''' Insertion sort '''
 	for i in range(1, len(array)):
 		element = array[i]
 		j = i
@@ -10,6 +11,7 @@ def insertsort(array, field: str):
 		array[j] = element
 
 def merge(array, field: str, frm: int, pivot: int, to: int, len1: int, len2: int):
+	''' Merge sort algorithm '''
 	if len1 == 0 or len2 == 0:
 		return
 	if len1 + len2 == 2:
@@ -57,6 +59,7 @@ def merge(array, field: str, frm: int, pivot: int, to: int, len1: int, len2: int
 	merge(array, field, newmid, secondcut, to, len1-len11, len2-len22)
 
 def mergesort(array, field: str, frm: int = 0, to:Optional[int] = None):
+	''' Merge sort '''
 	if to is None:
 		to = len(array)
 	if to - frm < 2:
