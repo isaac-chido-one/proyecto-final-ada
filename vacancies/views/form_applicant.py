@@ -1,20 +1,21 @@
 import tkinter as tk
 from tkinter import ttk
+from typing import Callable, Optional
 from vacancies.entities.applicant import Applicant
 from vacancies.structures.app import findApplicant, insertApplicant
 from vacancies.utils import appName, createIcon, notifyAlert, notifySuccess
 
 class FormApplicant(tk.Toplevel):
 
-    def __init__(self, parentModal, callback):
+    def __init__(self, parentModal: tk.Toplevel, callback: Callable[[], None]):
         super().__init__(parentModal)
-        self.applicant = None
+        self.applicant = Applicant()
         self.callback = callback
 
         self.title(appName('Candidatos'))
         self.geometry('780x270')
         self.state('withdrawn')
-        self.protocol('WM_DELETE_WINDOW', self.onClose)
+        self.protocol('WM_DELETE_WINDOW', self.close)
 
         # configure the grid
         self.columnconfigure(0, weight=1)
@@ -72,12 +73,8 @@ class FormApplicant(tk.Toplevel):
         self.buttonStore = ttk.Button(self.frameButtons, text='Guardar', image=self.iconStore, compound=tk.LEFT, command=lambda: self.store())
         self.buttonStore.grid(column=1, row=0, padx=5)
 
-    # Evento al cerrar la ventana
-    def onClose(self):
-        self.close()
-
     # Abrir la ventana
-    def open(self, applicant = None):
+    def open(self, applicant:Optional[Applicant] = None):
         self.applicant = applicant
         self.entryFirstName.delete(0, tk.END)
         self.entryLastName.delete(0, tk.END)
@@ -85,7 +82,7 @@ class FormApplicant(tk.Toplevel):
         self.entryPhone.delete(0, tk.END)
         self.textResume.delete('1.0', tk.END)
 
-        if not applicant is None:
+        if applicant is not None:
             self.entryFirstName.insert(0, applicant.first_name)
             self.entryLastName.insert(0, applicant.last_name)
             self.entryEmail.insert(0, applicant.email)
@@ -96,8 +93,8 @@ class FormApplicant(tk.Toplevel):
 
     # Cerrar la ventana
     def close(self):
-        self.applicant = None
         self.withdraw()
+        self.callback()
 
     # Guadar la información de una candidato
     def store(self):
@@ -122,9 +119,6 @@ class FormApplicant(tk.Toplevel):
             notifyAlert('Los apellidos son requeridos', self.entryLastName)
             return
 
-        # if checkIfExists:
-        #     notifyAlert('exists')
-        #     return
         newApplicant = Applicant(email, first_name, last_name, phone, resume)
         currentApplicant = findApplicant(newApplicant)
 

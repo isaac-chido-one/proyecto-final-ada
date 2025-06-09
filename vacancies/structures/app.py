@@ -1,6 +1,7 @@
 import json, os
 from typing import Any, Callable, Optional
 from vacancies.entities.applicant import Applicant
+from vacancies.entities.experience import Experience
 from vacancies.entities.vacancy import Vacancy
 from vacancies.structures.stack import Stack
 from vacancies.structures.node import Node
@@ -68,6 +69,12 @@ def loadStructures(source_file: str):
 		applicant = Applicant.from_dictionary(elem)
 		insertApplicant(applicant)
 
+		if 'experience' in elem:
+			for row in elem['experience']:
+				experience = Experience.from_dictionary(row)
+				hash = experience.hash()
+				applicant.experience.set(hash, experience)
+
 	for elem in dictionary['vacancies']:
 		vacancy = Vacancy.from_dictionary(elem)
 		insertVacancy(vacancy)
@@ -93,7 +100,6 @@ def storeStructures():
 	Node.each(listVacancies, to_dictionary, vacancies)
 	dictionary = {
 		'applicants': applicants,
-		'experience': [],
 		'vacancies': vacancies
 	}
 	js = json.dumps(dictionary)

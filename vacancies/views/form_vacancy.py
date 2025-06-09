@@ -11,7 +11,7 @@ class FormVacancy(tk.Toplevel):
     def __init__(self, parentModal: tk.Toplevel, callback: Callable[[], None]):
         super().__init__(parentModal)
         self.callback = callback
-        self.vacancy = None
+        self.vacancy = Vacancy()
 
         self.title(appName('Vacantes'))
         self.geometry('800x400')

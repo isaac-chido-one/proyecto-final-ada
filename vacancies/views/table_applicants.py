@@ -6,17 +6,19 @@ from vacancies.entities.applicant import Applicant
 from vacancies.structures.app import findApplicant, forEachApplicant, removeApplicant, sortApplicants
 from vacancies.utils import appName, createIcon, notifySuccess
 from vacancies.views.form_applicant import FormApplicant
+from vacancies.views.table_experience import TableExperience
 
 class TableApplicants(tk.Toplevel):
 
     def __init__(self, parentModal: tk.Tk):
         super().__init__(parentModal)
-        self.modal = FormApplicant(parentModal, self.onStore)
+        self.modalCreate = FormApplicant(self, self.open)
+        self.modalExperience = TableExperience(self, self.open)
 
         self.title(appName('Candidatos'))
-        self.geometry('700x500')
+        self.geometry('800x500')
         self.state('withdrawn')
-        self.protocol('WM_DELETE_WINDOW', self.onClose)
+        self.protocol('WM_DELETE_WINDOW', self.close)
         self.resizable(True, True)
 
         # configure the grid
@@ -48,7 +50,7 @@ class TableApplicants(tk.Toplevel):
         self.buttonUpdate = ttk.Button(self.frameButtons, text='Editar', image=self.iconUpdate, compound=tk.LEFT, command=lambda: self.updateApplicant())
         self.buttonUpdate.grid(column=2, row=0, padx=5)
 
-        # button new
+        # button create
         self.iconCreate = createIcon('square-plus')
         self.buttonCreate = ttk.Button(self.frameButtons, text='Nuevo', image=self.iconCreate, compound=tk.LEFT, command=lambda: self.createApplicant())
         self.buttonCreate.grid(column=3, row=0, padx=5)
@@ -106,10 +108,6 @@ class TableApplicants(tk.Toplevel):
         self.treeview.grid(row=1, column=0, sticky=tk.NSEW, pady=10)
         self.treeview.bind('<<TreeviewSelect>>', self.onSelect)
 
-    # Evento al cerrar la ventana
-    def onClose(self):
-        self.close()
-
     # Agregar un candidato a la tabla
     def insertApplicant(self, applicant: Applicant, args: Any):
         i = args['i']
@@ -151,10 +149,6 @@ class TableApplicants(tk.Toplevel):
         self.buttonDestroy.config(state=state)
         self.buttonUpdate.config(state=state)
 
-    def onStore(self):
-        self.reload()
-        self.iconify()
-
     # Retorna el candidato seleccionada en la tabla
     def selectedApplicant(self) -> Optional[Applicant]:
         selection = self.treeview.selection()
@@ -170,7 +164,7 @@ class TableApplicants(tk.Toplevel):
 
     def createApplicant(self):
         self.close()
-        self.modal.open()
+        self.modalCreate.open()
 
     def destroyApplicant(self):
         applicant = self.selectedApplicant()
@@ -196,7 +190,8 @@ class TableApplicants(tk.Toplevel):
         if applicant is None:
             return
 
-        print(applicant)
+        self.close()
+        self.modalExperience.open(applicant)
 
     def updateApplicant(self):
         applicant = self.selectedApplicant()
@@ -205,7 +200,7 @@ class TableApplicants(tk.Toplevel):
             return
 
         self.close()
-        self.modal.open(applicant)
+        self.modalCreate.open(applicant)
 
     def sortByEmail(self):
         sortApplicants('email')

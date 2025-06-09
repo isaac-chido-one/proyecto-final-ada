@@ -12,8 +12,8 @@ class TableVacancies(tk.Toplevel):
 
     def __init__(self, parentModal: tk.Tk):
         super().__init__(parentModal)
-        self.modalPostulations = TablePostulations(self, self.open)
         self.modalCreate = FormVacancy(self, self.open)
+        self.modalPostulations = TablePostulations(self, self.open)
 
         self.title(appName('Vacantes'))
         self.geometry('700x500')

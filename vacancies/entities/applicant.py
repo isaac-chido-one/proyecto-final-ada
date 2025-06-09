@@ -1,3 +1,6 @@
+from vacancies.entities.experience import Experience
+from vacancies.structures.hash_table import HashTable
+
 class Applicant:
 
 	def __init__(
@@ -9,6 +12,7 @@ class Applicant:
 			resume: str = ''
 	):
 		self.__email = email
+		self.__experience = HashTable()
 		self.__first_name = first_name
 		self.__last_name = last_name
 		self.__phone = phone
@@ -17,6 +21,10 @@ class Applicant:
 	@property
 	def email(self) -> str:
 		return self.__email
+
+	@property
+	def experience(self) -> HashTable:
+		return self.__experience
 
 	@property
 	def first_name(self) -> str:
@@ -68,9 +76,16 @@ class Applicant:
 
 		return 0 if a == b else (-1 if a < b else 1)
 
+	def buildExperienceArray(self, experience: Experience, array):
+		array.append(experience.to_dictionary())
+
 	def to_dictionary(self) -> dict:
+		experience = []
+		self.experience.each(self.buildExperienceArray, experience)
+
 		return {
 			'email': self.__email,
+			'experience': experience,
 			'first_name': self.__first_name,
 			'last_name': self.__last_name,
 			'phone': self.__phone,
@@ -84,4 +99,5 @@ class Applicant:
 		last_name = dictionary['last_name']
 		phone = dictionary['phone']
 		resume = dictionary['resume']
+
 		return Applicant(email, first_name, last_name, phone, resume)

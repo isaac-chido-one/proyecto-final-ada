@@ -1,27 +1,27 @@
-from typing import Optional
-from vacancies.entities.applicant import Applicant
+from slugify import slugify
+from typing import Final, Optional
 
 class Experience:
+	TYPES: Final = [
+		'Estudio o grado',
+		'Puesto anterior',
+		'Curso',
+		'Certificación',
+	]
 
 	def __init__(
 			self,
-			applicant:Applicant,
 			ending_year:Optional[int] = None,
 			institution: str = '',
 			starting_year:Optional[int] = None,
 			title: str = '',
 			type: int = 0
 	):
-		self.__applicant = applicant
 		self.__ending_year = ending_year
 		self.__institution = institution
 		self.__starting_year = starting_year
 		self.__title = title
 		self.__type = type
-
-	@property
-	def applicant(self) -> Applicant:
-		return self.__applicant
 
 	@property
 	def ending_year(self) -> Optional[int]:
@@ -30,6 +30,10 @@ class Experience:
 	@property
 	def institution(self) -> str:
 		return self.__institution
+
+	@property
+	def repr_type(self):
+		return self.TYPES[self.__type]
 
 	@property
 	def starting_year(self) -> Optional[int]:
@@ -42,10 +46,6 @@ class Experience:
 	@property
 	def type(self):
 		return self.__type
-
-	@applicant.setter
-	def applicant(self, applicant: Applicant):
-		self.__applicant = applicant
 
 	@ending_year.setter
 	def ending_year(self, ending_year: Optional[int]):
@@ -67,5 +67,27 @@ class Experience:
 	def type(self, type: int):
 		self.__type = type
 
+	def hash(self) -> str:
+		return '{0};{1};{2}'.format(self.__type, slugify(self.__title), slugify(self.__institution))
+
 	def __repr__(self):
-		return 'Puesto o estudio: {0} Empresa o institucion: {1}'.format(self.__title, self.__institution)
+		return '"{0} - {1} - {2}"'.format(self.repr_type, self.__title, self.__institution)
+
+	def to_dictionary(self) -> dict:
+		return {
+			'ending_year': self.__ending_year,
+			'institution': self.__institution,
+			'starting_year': self.__starting_year,
+			'title': self.__title,
+			'type': self.__type
+		}
+
+	@staticmethod
+	def from_dictionary(dictionary: dict):
+		ending_year = dictionary['ending_year']
+		institution = dictionary['institution']
+		starting_year = dictionary['starting_year']
+		title = dictionary['title']
+		type = dictionary['type']
+
+		return Experience(ending_year=ending_year, institution=institution, starting_year=starting_year, title=title, type=type)
