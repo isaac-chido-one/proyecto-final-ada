@@ -7,6 +7,8 @@ from vacancies.structures.stack import Stack
 from vacancies.structures.node import Node
 from vacancies.utils import appendDictionaryToArray
 
+# TODO: Renombrar como persistence.py
+
 # Ruta del archivo json para guardar y leer la información de las estructuras.
 filename = ''
 

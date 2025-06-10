@@ -7,8 +7,10 @@ from vacancies.structures.app import forEachApplicant, findApplicant
 from vacancies.utils import appName, appendToArray, createIcon, notifySuccess
 
 class SelectApplicant(tk.Toplevel):
+	''' Ventana para seleccionar un candidato para una vacante. '''
 
 	def __init__(self, parentModal: tk.Toplevel, callback: Callable[[], None]):
+		''' Agrgega los widgets necesarios a la ventana. '''
 		super().__init__(parentModal)
 		self.callback = callback
 		self.vacancy = Vacancy()
@@ -72,10 +74,12 @@ class SelectApplicant(tk.Toplevel):
 		self.buttonApply.grid(column=1, row=0, padx=5)
 
 	def removeApplicant(self, applicant: Applicant, applicants):
+		''' Elimina la candidato seleccionado de la pila de candidatos por vacante. '''
 		applicants.remove(applicant)
 
-	# Recargar la tabla
 	def reload(self):
+		''' Recargar la tabla '''
+
 		# clear the treeview
 		for children in self.treeview.get_children():
 			self.treeview.delete(children)
@@ -96,29 +100,25 @@ class SelectApplicant(tk.Toplevel):
 		# disable button apply
 		self.buttonApply.config(state=tk.DISABLED)
 
-	# Abrir la ventana
 	def open(self, vacancy: Vacancy):
+		''' Abrir la ventanta y recargar la tabla '''
 		self.vacancy = vacancy
 		self.reload()
 		self.iconify()
 
-	# Cerrar la ventana
 	def close(self):
+		''' Cerrar la ventana '''
 		self.withdraw()
 		self.callback()
 
-	# Evento al seleccionar un candidato de la tabla
 	def onSelect(self, event):
+		''' Evento al seleccionar un candidato de la tabla '''
 		selection = self.treeview.selection()
 		state = tk.NORMAL if len(selection) == 1 else tk.DISABLED
 		self.buttonApply.config(state=state)
 
-	def onStore(self):
-		self.reload()
-		self.iconify()
-
-	# Retorna el candidato seleccionada en la tabla
 	def selectedApplicant(self) -> Optional[Applicant]:
+		''' Retorna el candidato seleccionado en la tabla '''
 		selection = self.treeview.selection()
 
 		if len(selection) == 0:
@@ -131,6 +131,7 @@ class SelectApplicant(tk.Toplevel):
 		return findApplicant(applicant)
 
 	def apply(self):
+		''' Agrega un candidato a la pila de candidatos de la vacante. '''
 		applicant = self.selectedApplicant()
 
 		if applicant is None:

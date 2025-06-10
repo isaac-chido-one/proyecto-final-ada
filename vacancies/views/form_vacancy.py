@@ -7,8 +7,10 @@ from vacancies.structures.app import findVacancy, insertVacancy
 from vacancies.utils import appName, createIcon, notifyAlert, notifySuccess
 
 class FormVacancy(tk.Toplevel):
+    ''' Ventana de creación o edición de vcacantes. '''
 
     def __init__(self, parentModal: tk.Toplevel, callback: Callable[[], None]):
+        ''' Agrgega los widgets necesarios a la ventana. '''
         super().__init__(parentModal)
         self.callback = callback
         self.vacancy = Vacancy()
@@ -88,8 +90,8 @@ class FormVacancy(tk.Toplevel):
         self.buttonStore = ttk.Button(self.frameButtons, text='Guardar', image=self.iconStore, compound=tk.LEFT, command=lambda: self.store())
         self.buttonStore.grid(column=1, row=0, padx=5)
 
-    # Abrir la ventana
     def open(self, vacancy = None):
+        ''' Abrir la ventana '''
         self.vacancy = vacancy
         self.entryTitle.delete(0, tk.END)
         self.entryCompany.delete(0, tk.END)
@@ -110,13 +112,13 @@ class FormVacancy(tk.Toplevel):
 
         self.iconify()
 
-    # Cerrar la ventana
     def close(self):
+        ''' Cerrar la ventana '''
         self.withdraw()
         self.callback()
 
-    # Guadar la información de una vacante
     def store(self):
+        ''' Guadar la información de una vacante. '''
         title = self.entryTitle.get()
         title = title.strip()
         company = self.entryCompany.get()

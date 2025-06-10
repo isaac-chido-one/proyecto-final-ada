@@ -7,8 +7,10 @@ from vacancies.entities.experience import Experience
 from vacancies.utils import appName, createIcon, notifyAlert, notifySuccess
 
 class FormExperience(tk.Toplevel):
+    ''' Ventana de creación o edición de experiencia. '''
 
     def __init__(self, parentModal: tk.Toplevel, callback: Callable[[], None]):
+        ''' Agrgega los widgets necesarios a la ventana. '''
         super().__init__(parentModal)
         self.applicant = Applicant()
         self.callback = callback
@@ -78,8 +80,8 @@ class FormExperience(tk.Toplevel):
         self.buttonStore = ttk.Button(self.frameButtons, text='Guardar', image=self.iconStore, compound=tk.LEFT, command=lambda: self.store())
         self.buttonStore.grid(column=1, row=0, padx=5)
 
-    # Abrir la ventana
     def open(self, applicant:Applicant, experience:Optional[Experience] = None):
+        ''' Abrir la ventana '''
         self.applicant = applicant
         self.experience = experience
         self.comboType.current(0)
@@ -97,13 +99,13 @@ class FormExperience(tk.Toplevel):
 
         self.iconify()
 
-    # Cerrar la ventana
     def close(self):
+        ''' Cerrar la ventana '''
         self.withdraw()
         self.callback()
 
-    # Guadar la información de experiencia
     def store(self):
+        ''' Guadar la información de experiencia '''
         type = self.comboType.current() - 1
         title = self.entryTitle.get()
         title = title.strip()

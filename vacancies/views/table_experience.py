@@ -8,8 +8,10 @@ from vacancies.utils import appName, createIcon, notifySuccess
 from vacancies.views.form_experience import FormExperience
 
 class TableExperience(tk.Toplevel):
+	''' Ventana para el CRUD de experiencia por candidato. '''
 
 	def __init__(self, parentModal: tk.Toplevel, callback: Callable[[], None]):
+		''' Agrgega los widgets necesarios a la ventana. '''
 		super().__init__(parentModal)
 		self.callback = callback
 		self.modal = FormExperience(parentModal, self.onUpdate)
@@ -104,8 +106,8 @@ class TableExperience(tk.Toplevel):
 		self.treeview.grid(row=1, column=0, sticky=tk.NSEW, pady=10)
 		self.treeview.bind('<<TreeviewSelect>>', self.onSelect)
 
-	# Agregar un registro de experiencia a la tabla
 	def insertExperience(self, experience: Experience, args: Any):
+		''' Agrega un registro de experiencia a la tabla. '''
 		i = args['i']
 		values = [
 			experience.repr_type,
@@ -118,8 +120,9 @@ class TableExperience(tk.Toplevel):
 		self.treeview.insert(parent='', index=i, iid=i, values=values, tags=(tag,))
 		args['i'] += 1
 
-	# Recargar la tabla
 	def reload(self):
+		''' Recargar la tabla '''
+
 		# clear the treeview
 		for children in self.treeview.get_children():
 			self.treeview.delete(children)
@@ -133,29 +136,30 @@ class TableExperience(tk.Toplevel):
 		self.buttonUpdate.config(state=tk.DISABLED)
 		self.buttonDestroy.config(state=tk.DISABLED)
 
-	# Abrir la ventana
 	def open(self, applicant: Applicant):
+		''' Abrir la ventanta y recargar la tabla '''
 		self.applicant = applicant
 		self.onUpdate()
 
-	# Cerrar la ventana
 	def close(self):
+		''' Cerrar la ventana '''
 		self.withdraw()
 		self.callback()
 
-	# Evento al seleccionar un candidato de la tabla
 	def onSelect(self, event):
+		''' Evento al seleccionar un registro de experiencia de la tabla '''
 		selection = self.treeview.selection()
 		state = tk.NORMAL if len(selection) == 1 else tk.DISABLED
 		self.buttonUpdate.config(state=state)
 		self.buttonDestroy.config(state=state)
 
 	def onUpdate(self):
+		''' Evento al cerrar una ventana hija. '''
 		self.reload()
 		self.iconify()
 
-	# Retorna la experiencia seleccionada en la tabla
 	def selectedExperience(self) -> Optional[Experience]:
+		''' Retorna la experiencia seleccionada en la tabla '''
 		selection = self.treeview.selection()
 
 		if len(selection) == 0:
@@ -172,10 +176,12 @@ class TableExperience(tk.Toplevel):
 		return self.applicant.experience.get(hash)
 
 	def createExperience(self):
+		''' Abre la ventana para crear un nuevo registro de experiencia. '''
 		self.withdraw()
 		self.modal.open(self.applicant)
 
 	def destroyExperience(self):
+		''' Elimina la experiencia seleccionada en la tabla. '''
 		experience = self.selectedExperience()
 
 		if experience is None:
@@ -195,6 +201,7 @@ class TableExperience(tk.Toplevel):
 		self.reload()
 
 	def updateExperience(self):
+		''' Abre la ventana para editar el registro seleccionado de experiencia. '''
 		experience = self.selectedExperience()
 
 		if experience is None:
@@ -204,17 +211,21 @@ class TableExperience(tk.Toplevel):
 		self.modal.open(self.applicant, experience)
 
 	def sortByTitle(self):
+		''' Ordena la tabla de experiencia por puesto o estudio de menor a mayor. '''
 		self.applicant.experience.insertSort('title')
 		self.reload()
 
 	def sortByInstitution(self):
+		''' Ordena la tabla de experiencia por empresa o institución de menor a mayor. '''
 		self.applicant.experience.insertSort('institution')
 		self.reload()
 
 	def sortByStartingYear(self):
+		''' Ordena la tabla de experiencia por año inicial de menor a mayor. '''
 		self.applicant.experience.insertSort('starting_year')
 		self.reload()
 
 	def sortByEndingYear(self):
+		''' Ordena la tabla de experiencia por año final de menor a mayor. '''
 		self.applicant.experience.insertSort('ending_year')
 		self.reload()

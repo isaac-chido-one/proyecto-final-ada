@@ -9,8 +9,10 @@ from vacancies.views.form_vacancy import FormVacancy
 from vacancies.views.table_postulations import TablePostulations
 
 class TableVacancies(tk.Toplevel):
+    ''' Ventana para el CRUD de vacantes. '''
 
     def __init__(self, parentModal: tk.Tk):
+        ''' Agrgega los widgets necesarios a la ventana. '''
         super().__init__(parentModal)
         self.modalCreate = FormVacancy(self, self.open)
         self.modalPostulations = TablePostulations(self, self.open)
@@ -102,8 +104,8 @@ class TableVacancies(tk.Toplevel):
         self.treeview.grid(row=1, column=0, sticky=tk.NSEW, pady=10)
         self.treeview.bind('<<TreeviewSelect>>', self.onSelect)
 
-    # Agregar una vacante a la tabla
     def insertVacancy(self, vacancy: Vacancy, args: Any):
+        ''' Agregar una vacante a la tabla '''
         i = args['i']
         applicants = vacancy.applicants.Tamano()
         values = [vacancy.title, vacancy.company, vacancy.location, applicants]
@@ -111,8 +113,9 @@ class TableVacancies(tk.Toplevel):
         self.treeview.insert(parent='', index=i, iid=i, values=values, tags=(tag,))
         args['i'] += 1
 
-    # Recargar la tabla
     def reload(self):
+        ''' Recargar la tabla '''
+
         # clear the treeview
         for children in self.treeview.get_children():
             self.treeview.delete(children)
@@ -127,25 +130,25 @@ class TableVacancies(tk.Toplevel):
         self.buttonDestroy.config(state=tk.DISABLED)
         self.buttonUpdate.config(state=tk.DISABLED)
 
-    # Abrir la ventana
     def open(self):
+        ''' Abrir la ventanta y recargar la tabla '''
         self.reload()
         self.iconify()
 
-    # Cerrar la ventana
     def close(self):
+        ''' Cerrar la ventana '''
         self.withdraw()
 
-    # Evento al seleccionar un candidato de la tabla
     def onSelect(self, event):
+        ''' Evento al seleccionar una vacante de la tabla '''
         selection = self.treeview.selection()
         state = tk.NORMAL if len(selection) == 1 else tk.DISABLED
         self.buttonApplicants.config(state=state)
         self.buttonDestroy.config(state=state)
         self.buttonUpdate.config(state=state)
 
-    # Retorna la vacante seleccionada en la tabla
     def selectedVacancy(self) -> Optional[Vacancy]:
+        ''' Retorna la vacante seleccionada en la tabla '''
         selection = self.treeview.selection()
         if len(selection) == 0:
             return None
@@ -157,10 +160,12 @@ class TableVacancies(tk.Toplevel):
         return findVacancy(vacancy)
 
     def createVacancy(self):
+        ''' Abre la ventana para crear una nueva vacante. '''
         self.close()
         self.modalCreate.open()
 
     def destroyVacancy(self):
+        ''' Elimina la vacante seleccionada en la tabla. '''
         vacancy = self.selectedVacancy()
 
         if vacancy is None:
@@ -179,6 +184,7 @@ class TableVacancies(tk.Toplevel):
         self.reload()
 
     def showApplicants(self):
+        ''' Abre la tabla de los candidatos de la vacante. '''
         vacancy = self.selectedVacancy()
 
         if vacancy is None:
@@ -188,6 +194,7 @@ class TableVacancies(tk.Toplevel):
         self.modalPostulations.open(vacancy)
 
     def updateVacancy(self):
+        ''' Abre la ventana para editar la vacante seleccionada. '''
         vacancy = self.selectedVacancy()
 
         if vacancy is None:
@@ -197,13 +204,16 @@ class TableVacancies(tk.Toplevel):
         self.modalCreate.open(vacancy)
 
     def sortByCompany(self):
+        ''' Ordena la tabla de vacantes por empresa de menor a mayor. '''
         sortVacancies('company')
         self.reload()
 
     def sortByLocation(self):
+        ''' Ordena la tabla de vacantes por locación de menor a mayor. '''
         sortVacancies('location')
         self.reload()
 
     def sortByTitle(self):
+        ''' Ordena la tabla de vacantes por puesto de menor a mayor. '''
         sortVacancies('title')
         self.reload()

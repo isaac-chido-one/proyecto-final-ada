@@ -8,8 +8,10 @@ from vacancies.utils import appName, createIcon, notifySuccess
 from vacancies.views.select_applicant import SelectApplicant
 
 class TablePostulations(tk.Toplevel):
+	''' Ventana para el CRUD de candidatos por vacante. '''
 
 	def __init__(self, parentModal: tk.Toplevel, callback: Callable[[], None]):
+		''' Agrgega los widgets necesarios a la ventana. '''
 		super().__init__(parentModal)
 		self.callback = callback
 		self.modal = SelectApplicant(parentModal, self.onUpdate)
@@ -31,7 +33,6 @@ class TablePostulations(tk.Toplevel):
 		self.frameButtons.grid(row=0, column=0, sticky=tk.E, pady=10)
 		self.frameButtons.rowconfigure(0, weight=1)
 		self.frameButtons.rowconfigure(1, weight=1)
-		self.frameButtons.rowconfigure(2, weight=1)
 		self.frameButtons.columnconfigure(0, weight=1)
 
 		# button unapply
@@ -39,15 +40,10 @@ class TablePostulations(tk.Toplevel):
 		self.buttonUnapply = ttk.Button(self.frameButtons, text='Despostular', image=self.iconUnapply, compound=tk.LEFT, command=lambda: self.unapplyApplicant())
 		self.buttonUnapply.grid(column=0, row=0, padx=5)
 
-		# button experience
-		self.iconApplicants = createIcon('user-tie')
-		self.buttonExperience = ttk.Button(self.frameButtons, text='Experiencia', image=self.iconApplicants, compound=tk.LEFT, command=lambda: self.showExperience())
-		self.buttonExperience.grid(column=1, row=0, padx=5)
-
 		# button apply
 		self.iconApply = createIcon('square-plus')
 		self.buttonApply = ttk.Button(self.frameButtons, text='Postular', image=self.iconApply, compound=tk.LEFT, command=lambda: self.applyApplicant())
-		self.buttonApply.grid(column=2, row=0, padx=5)
+		self.buttonApply.grid(column=1, row=0, padx=5)
 
 		# Create a Treeview widget
 		self.treeview = ttk.Treeview(self)
@@ -102,16 +98,17 @@ class TablePostulations(tk.Toplevel):
 		self.treeview.grid(row=1, column=0, sticky=tk.NSEW, pady=10)
 		self.treeview.bind('<<TreeviewSelect>>', self.onSelect)
 
-	# Agregar un candidato a la tabla
 	def insertApplicant(self, applicant: Applicant, args: Any):
+		''' Agregar un candidato a la tabla '''
 		i = args['i']
 		values = [applicant.first_name, applicant.last_name, applicant.email, applicant.phone]
 		tag = 'evenrow' if i % 2 == 0 else 'oddrow'
 		self.treeview.insert(parent='', index=i, iid=i, values=values, tags=(tag,))
 		args['i'] += 1
 
-	# Recargar la tabla
 	def reload(self):
+		''' Recargar la tabla '''
+
 		# clear the treeview
 		for children in self.treeview.get_children():
 			self.treeview.delete(children)
@@ -121,33 +118,32 @@ class TablePostulations(tk.Toplevel):
 		args = {'i': 0}
 		self.vacancy.applicants.each(self.insertApplicant, args)
 
-		# disable buttons unapply and experience
-		self.buttonExperience.config(state=tk.DISABLED)
+		# disable button unapply
 		self.buttonUnapply.config(state=tk.DISABLED)
 
-	# Abrir la ventana
 	def open(self, vacancy: Vacancy):
+		''' Abrir la ventanta y recargar la tabla '''
 		self.vacancy = vacancy
 		self.onUpdate()
 
-	# Cerrar la ventana
 	def close(self):
+		''' Cerrar la ventana '''
 		self.withdraw()
 		self.callback()
 
-	# Evento al seleccionar un candidato de la tabla
 	def onSelect(self, event):
+		''' Evento al seleccionar un candidato de la tabla '''
 		selection = self.treeview.selection()
 		state = tk.NORMAL if len(selection) == 1 else tk.DISABLED
-		self.buttonExperience.config(state=state)
 		self.buttonUnapply.config(state=state)
 
 	def onUpdate(self):
+		''' Evento al cerrar una ventana hija. '''
 		self.reload()
 		self.iconify()
 
-	# Retorna el candidato seleccionada en la tabla
 	def selectedApplicant(self) -> Optional[Applicant]:
+		''' Retorna el candidato seleccionado en la tabla '''
 		selection = self.treeview.selection()
 
 		if len(selection) == 0:
@@ -160,10 +156,12 @@ class TablePostulations(tk.Toplevel):
 		return self.vacancy.applicants.find(applicant)
 
 	def applyApplicant(self):
+		''' Abre la ventana para postular candidato a una vacante. '''
 		self.withdraw()
 		self.modal.open(self.vacancy)
 
 	def unapplyApplicant(self):
+		''' Despostula el candidato seleccionado en la tabla. '''
 		applicant = self.selectedApplicant()
 
 		if applicant is None:
@@ -181,26 +179,22 @@ class TablePostulations(tk.Toplevel):
 		notifySuccess(message)
 		self.reload()
 
-	def showExperience(self):
-		applicant = self.selectedApplicant()
-
-		if applicant is None:
-			return
-
-		print(applicant)
-
 	def sortByEmail(self):
+		''' Ordena la tabla de candidatos por correo de menor a mayor. '''
 		self.vacancy.applicants.insertSort('email')
 		self.reload()
 
 	def sortByFirstName(self):
+		''' Ordena la tabla de candidatos por nombres de menor a mayor. '''
 		self.vacancy.applicants.insertSort('first_name')
 		self.reload()
 
 	def sortByLastName(self):
+		''' Ordena la tabla de candidatos por apelldos de menor a mayor. '''
 		self.vacancy.applicants.insertSort('last_name')
 		self.reload()
 
 	def sortByPhone(self):
+		''' Ordena la tabla de candidatos por teléfono de menor a mayor. '''
 		self.vacancy.applicants.insertSort('phone')
 		self.reload()

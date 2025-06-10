@@ -9,8 +9,10 @@ from vacancies.views.form_applicant import FormApplicant
 from vacancies.views.table_experience import TableExperience
 
 class TableApplicants(tk.Toplevel):
+    ''' Ventana para el CRUD de candidatos. '''
 
     def __init__(self, parentModal: tk.Tk):
+        ''' Agrgega los widgets necesarios a la ventana. '''
         super().__init__(parentModal)
         self.modalCreate = FormApplicant(self, self.open)
         self.modalExperience = TableExperience(self, self.open)
@@ -41,7 +43,7 @@ class TableApplicants(tk.Toplevel):
         self.buttonDestroy.grid(column=0, row=0, padx=5)
 
         # button experience
-        self.iconApplicants = createIcon('user-tie')
+        self.iconApplicants = createIcon('graduation-cap')
         self.buttonExperience = ttk.Button(self.frameButtons, text='Experiencia', image=self.iconApplicants, compound=tk.LEFT, command=lambda: self.showExperience())
         self.buttonExperience.grid(column=1, row=0, padx=5)
 
@@ -108,16 +110,17 @@ class TableApplicants(tk.Toplevel):
         self.treeview.grid(row=1, column=0, sticky=tk.NSEW, pady=10)
         self.treeview.bind('<<TreeviewSelect>>', self.onSelect)
 
-    # Agregar un candidato a la tabla
     def insertApplicant(self, applicant: Applicant, args: Any):
+        ''' Agregar un candidato a la tabla '''
         i = args['i']
         values = [applicant.first_name, applicant.last_name, applicant.email, applicant.phone]
         tag = 'evenrow' if i % 2 == 0 else 'oddrow'
         self.treeview.insert(parent='', index=i, iid=i, values=values, tags=(tag,))
         args['i'] += 1
 
-    # Recargar la tabla
     def reload(self):
+        ''' Recargar la tabla '''
+
         # clear the treeview
         for children in self.treeview.get_children():
             self.treeview.delete(children)
@@ -132,25 +135,25 @@ class TableApplicants(tk.Toplevel):
         self.buttonDestroy.config(state=tk.DISABLED)
         self.buttonUpdate.config(state=tk.DISABLED)
 
-    # Abrir la ventana
     def open(self):
+        ''' Abrir la ventanta y recargar la tabla '''
         self.reload()
         self.iconify()
 
-    # Cerrar la ventana
     def close(self):
+        ''' Cerrar la ventana '''
         self.withdraw()
 
-    # Evento al seleccionar un candidato de la tabla
     def onSelect(self, event):
+        ''' Evento al seleccionar un candidato de la tabla '''
         selection = self.treeview.selection()
         state = tk.NORMAL if len(selection) == 1 else tk.DISABLED
         self.buttonExperience.config(state=state)
         self.buttonDestroy.config(state=state)
         self.buttonUpdate.config(state=state)
 
-    # Retorna el candidato seleccionada en la tabla
     def selectedApplicant(self) -> Optional[Applicant]:
+        ''' Retorna el candidato seleccionado en la tabla '''
         selection = self.treeview.selection()
 
         if len(selection) == 0:
@@ -163,10 +166,12 @@ class TableApplicants(tk.Toplevel):
         return findApplicant(applicant)
 
     def createApplicant(self):
+        ''' Abre la ventana para crear un nuevo candidato. '''
         self.close()
         self.modalCreate.open()
 
     def destroyApplicant(self):
+        ''' Elimina el candidato seleccionado en la tabla. '''
         applicant = self.selectedApplicant()
 
         if applicant is None:
@@ -185,6 +190,7 @@ class TableApplicants(tk.Toplevel):
         self.reload()
 
     def showExperience(self):
+        ''' Abre la tabla de la experiencia del candidato. '''
         applicant = self.selectedApplicant()
 
         if applicant is None:
@@ -194,6 +200,7 @@ class TableApplicants(tk.Toplevel):
         self.modalExperience.open(applicant)
 
     def updateApplicant(self):
+        ''' Abre la ventana para editar el candidato seleccionado. '''
         applicant = self.selectedApplicant()
 
         if applicant is None:
@@ -203,17 +210,21 @@ class TableApplicants(tk.Toplevel):
         self.modalCreate.open(applicant)
 
     def sortByEmail(self):
+        ''' Ordena la tabla de candidatos por correo de menor a mayor. '''
         sortApplicants('email')
         self.reload()
 
     def sortByFirstName(self):
+        ''' Ordena la tabla de candidatos por nombres de menor a mayor. '''
         sortApplicants('first_name')
         self.reload()
 
     def sortByLastName(self):
+        ''' Ordena la tabla de candidatos por apellidos de menor a mayor. '''
         sortApplicants('last_name')
         self.reload()
 
     def sortByPhone(self):
+        ''' Ordena la tabla de candidatos por teléfono de menor a mayor. '''
         sortApplicants('phone')
         self.reload()

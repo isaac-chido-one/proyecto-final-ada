@@ -6,7 +6,10 @@ from vacancies.views.table_applicants import TableApplicants
 from vacancies.views.table_vacancies import TableVacancies
 
 class Menu(tk.Tk):
+    ''' Ventana principal '''
+
     def __init__(self):
+        ''' Agrgega los widgets necesarios a la ventana. '''
         super().__init__()
         self.modalApplicants = TableApplicants(self)
         self.modalVacancies = TableVacancies(self)
@@ -46,10 +49,10 @@ class Menu(tk.Tk):
         self.labelAuthor = ttk.Label(self.frame, text='Powered by: Perla Dueñas, Herón Ortiz & Isaac Rojas')
         self.labelAuthor.grid(column=0, row=1, columnspan=6, sticky=tk.SE)
 
-    # Abre la ventana de candidatos
     def openModalApplicants(self):
+        ''' Abre la ventana de candidatos '''
         self.modalApplicants.open()
 
-    # Abre la ventana de vacantes
     def openModalVacancies(self):
+        ''' Abre la ventana de vacantes '''
         self.modalVacancies.open()
