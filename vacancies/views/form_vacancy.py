@@ -7,7 +7,7 @@ from vacancies.structures.app import findVacancy, insertVacancy
 from vacancies.utils import appName, createIcon, notifyAlert, notifySuccess
 
 class FormVacancy(tk.Toplevel):
-    ''' Ventana de creación o edición de vcacantes. '''
+    ''' Ventana de creación o edición de vacantes. '''
 
     def __init__(self, parentModal: tk.Toplevel, callback: Callable[[], None]):
         ''' Agrgega los widgets necesarios a la ventana. '''

@@ -1,7 +1,7 @@
 import tkinter as tk
 from tkinter import messagebox
 from tkinter import ttk
-from typing import Any, Optional
+from typing import Any, Callable, Optional
 from vacancies.entities.applicant import Applicant
 from vacancies.structures.app import findApplicant, forEachApplicant, removeApplicant, sortApplicants
 from vacancies.utils import appName, createIcon, notifySuccess
@@ -11,16 +11,17 @@ from vacancies.views.table_experience import TableExperience
 class TableApplicants(tk.Toplevel):
     ''' Ventana para el CRUD de candidatos. '''
 
-    def __init__(self, parentModal: tk.Tk):
+    def __init__(self, parentModal: tk.Tk, callback: Callable[[], None]):
         ''' Agrgega los widgets necesarios a la ventana. '''
         super().__init__(parentModal)
+        self.callback = callback
         self.modalCreate = FormApplicant(self, self.open)
         self.modalExperience = TableExperience(self, self.open)
 
         self.title(appName('Candidatos'))
         self.geometry('800x500')
         self.state('withdrawn')
-        self.protocol('WM_DELETE_WINDOW', self.close)
+        self.protocol('WM_DELETE_WINDOW', self.finalize)
         self.resizable(True, True)
 
         # configure the grid
@@ -137,8 +138,13 @@ class TableApplicants(tk.Toplevel):
 
     def open(self):
         ''' Abrir la ventanta y recargar la tabla '''
+        state = self.state()
         self.reload()
-        self.iconify()
+
+        if state == 'iconic':
+            self.deiconify()
+        else:
+            self.iconify()
 
     def close(self):
         ''' Cerrar la ventana '''
@@ -228,3 +234,8 @@ class TableApplicants(tk.Toplevel):
         ''' Ordena la tabla de candidatos por teléfono de menor a mayor. '''
         sortApplicants('phone')
         self.reload()
+
+    def finalize(self):
+        ''' Cierra la ventana y regresa al menú '''
+        self.close()
+        self.callback()

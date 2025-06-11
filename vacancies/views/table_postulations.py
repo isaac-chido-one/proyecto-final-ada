@@ -20,7 +20,7 @@ class TablePostulations(tk.Toplevel):
 		self.title(appName('Candidatos por vacante'))
 		self.geometry('700x500')
 		self.state('withdrawn')
-		self.protocol('WM_DELETE_WINDOW', self.close)
+		self.protocol('WM_DELETE_WINDOW', self.finalize)
 		self.resizable(True, True)
 
 		# configure the grid
@@ -198,3 +198,8 @@ class TablePostulations(tk.Toplevel):
 		''' Ordena la tabla de candidatos por teléfono de menor a mayor. '''
 		self.vacancy.applicants.insertSort('phone')
 		self.reload()
+
+	def finalize(self):
+		''' Cierra la ventana y regresa al menú '''
+		self.close()
+		self.callback()

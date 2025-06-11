@@ -1,7 +1,7 @@
 import tkinter as tk
 from tkinter import messagebox
 from tkinter import ttk
-from typing import Any, Optional
+from typing import Any, Callable, Optional
 from vacancies.entities.vacancy import Vacancy
 from vacancies.structures.app import forEachVacancy, findVacancy, removeVacancy, sortVacancies
 from vacancies.utils import appName, createIcon, notifySuccess
@@ -11,16 +11,17 @@ from vacancies.views.table_postulations import TablePostulations
 class TableVacancies(tk.Toplevel):
     ''' Ventana para el CRUD de vacantes. '''
 
-    def __init__(self, parentModal: tk.Tk):
+    def __init__(self, parentModal: tk.Tk, callback: Callable[[], None]):
         ''' Agrgega los widgets necesarios a la ventana. '''
         super().__init__(parentModal)
+        self.callback = callback
         self.modalCreate = FormVacancy(self, self.open)
         self.modalPostulations = TablePostulations(self, self.open)
 
         self.title(appName('Vacantes'))
         self.geometry('700x500')
         self.state('withdrawn')
-        self.protocol('WM_DELETE_WINDOW', self.close)
+        self.protocol('WM_DELETE_WINDOW', self.finalize)
         self.resizable(True, True)
 
         # configure the grid
@@ -132,8 +133,13 @@ class TableVacancies(tk.Toplevel):
 
     def open(self):
         ''' Abrir la ventanta y recargar la tabla '''
+        state = self.state()
         self.reload()
-        self.iconify()
+
+        if state == 'iconic':
+            self.deiconify()
+        else:
+            self.iconify()
 
     def close(self):
         ''' Cerrar la ventana '''
@@ -217,3 +223,8 @@ class TableVacancies(tk.Toplevel):
         ''' Ordena la tabla de vacantes por puesto de menor a mayor. '''
         sortVacancies('title')
         self.reload()
+
+    def finalize(self):
+        ''' Cierra la ventana y regresa al menú '''
+        self.close()
+        self.callback()

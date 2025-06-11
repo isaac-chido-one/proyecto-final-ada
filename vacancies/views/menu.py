@@ -11,8 +11,8 @@ class Menu(tk.Tk):
     def __init__(self):
         ''' Agrgega los widgets necesarios a la ventana. '''
         super().__init__()
-        self.modalApplicants = TableApplicants(self)
-        self.modalVacancies = TableVacancies(self)
+        self.modalApplicants = TableApplicants(self, self.open)
+        self.modalVacancies = TableVacancies(self, self.open)
 
         self.geometry('800x600')
         self.title(appName('Home'))
@@ -51,8 +51,14 @@ class Menu(tk.Tk):
 
     def openModalApplicants(self):
         ''' Abre la ventana de candidatos '''
+        self.withdraw()
         self.modalApplicants.open()
 
     def openModalVacancies(self):
         ''' Abre la ventana de vacantes '''
+        self.withdraw()
         self.modalVacancies.open()
+
+    def open(self):
+        ''' Abrir la ventanta '''
+        self.iconify()
